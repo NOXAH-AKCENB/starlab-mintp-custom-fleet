@@ -7,8 +7,8 @@
     <text x="330" y="46">Adhérents</text>
     <text x="420" y="46">Cours</text>
     <text x="490" y="46">Cotisations</text>
-    <text x="590" y="46">Comptabilité</text>
-    <text x="700" y="46">Configuration</text>
+    <text x="572" y="46">Comptabilité</text>
+    <text x="652" y="46">Configuration</text>
   </g>
   <g font-size="13" fill="#212529">
     <rect x="20" y="80" width="170" height="250" rx="6" fill="#f8f9fa" stroke="#dee2e6"/>
@@ -31,10 +31,10 @@
 
     <rect x="590" y="80" width="150" height="250" rx="6" fill="#f8f9fa" stroke="#dee2e6"/>
     <text x="606" y="104" font-weight="bold">Cotisations</text>
-    <text x="606" y="130">Cotisations mensuelles</text>
-    <text x="606" y="150">Licences</text>
-    <text x="606" y="170">Générer le mois</text>
-    <text x="606" y="200" fill="#6c757d" font-size="11">Trésorier</text>
+    <text x="606" y="130">Cotisations</text><text x="606" y="146">mensuelles</text>
+    <text x="606" y="166">Licences</text>
+    <text x="606" y="186">Générer le mois</text>
+    <text x="606" y="220" fill="#6c757d" font-size="11">Trésorier</text>
   </g>
   <text x="20" y="352" font-size="12" fill="#6c757d">Menus réservés au trésorier : Cotisations → Générer, et Comptabilité. Configuration : administrateur.</text>
 </svg>
