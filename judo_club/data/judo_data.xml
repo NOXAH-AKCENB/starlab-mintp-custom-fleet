@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Produits utilisés sur les factures -->
+    <record id="product_judo_fee" model="product.product">
+        <field name="name">Cotisation mensuelle judo</field>
+        <field name="type">service</field>
+        <field name="list_price">0</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+    </record>
+    <record id="product_judo_licence" model="product.product">
+        <field name="name">Licence fédérale judo</field>
+        <field name="type">service</field>
+        <field name="list_price">0</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+    </record>
+    <record id="product_judo_extra" model="product.product">
+        <field name="name">Frais divers du club</field>
+        <field name="type">service</field>
+        <field name="list_price">0</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+    </record>
+
+    <!-- Rappels pour cotisations impayées -->
+    <record id="mail_template_judo_fee_reminder" model="mail.template">
+        <field name="name">Club de judo : rappel de cotisation impayée</field>
+        <field name="model_id" ref="model_judo_fee"/>
+        <field name="subject">Rappel : {{ object.name }} toujours impayée</field>
+        <field name="email_from">{{ (object.company_id.email or user.email or '') }}</field>
+        <field name="partner_to">{{ object.partner_id.id }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p>Bonjour <t t-out="object.partner_id.name or ''"/>,</p>
+                <p>Sauf erreur de notre part, la cotisation <t t-out="object.name or ''"/>
+                    d'un montant de <t t-out="object.amount"/> reste à régler.</p>
+                <p>Merci de bien vouloir procéder au règlement dans les meilleurs délais.
+                    Si vous avez déjà payé, veuillez ignorer ce message.</p>
+                <p>Cordialement,<br/><t t-out="object.company_id.name or ''"/></p>
+            </div>
+        </field>
+    </record>
+
+    <!-- Rappels pour licences non encore réglées -->
+    <record id="mail_template_judo_licence_reminder" model="mail.template">
+        <field name="name">Club de judo : rappel de renouvellement de licence</field>
+        <field name="model_id" ref="model_judo_licence"/>
+        <field name="subject">Rappel : {{ object.name }}</field>
+        <field name="email_from">{{ (object.company_id.email or user.email or '') }}</field>
+        <field name="partner_to">{{ object.partner_id.id }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p>Bonjour <t t-out="object.partner_id.name or ''"/>,</p>
+                <p>Le renouvellement de la licence de la saison <t t-out="object.season_id.name or ''"/>
+                    est attendu. Merci de nous contacter pour procéder à son règlement.</p>
+                <p>Cordialement,<br/><t t-out="object.company_id.name or ''"/></p>
+            </div>
+        </field>
+    </record>
+
+    <!-- Tâches planifiées -->
+    <record id="ir_cron_judo_generate_fees" model="ir.cron">
+        <field name="name">Club de judo : générer les cotisations du mois</field>
+        <field name="model_id" ref="model_judo_fee"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_generate_monthly_fees()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active" eval="True"/>
+    </record>
+    <record id="ir_cron_judo_fee_reminders" model="ir.cron">
+        <field name="name">Club de judo : rappels de cotisations impayées</field>
+        <field name="model_id" ref="model_judo_fee"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_send_reminders()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active" eval="True"/>
+    </record>
+    <record id="ir_cron_judo_licence_reminders" model="ir.cron">
+        <field name="name">Club de judo : rappels de licences</field>
+        <field name="model_id" ref="model_judo_licence"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_send_reminders()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Saisons -->
+    <record id="view_judo_season_tree" model="ir.ui.view">
+        <field name="name">judo.season.tree</field>
+        <field name="model">judo.season</field>
+        <field name="arch" type="xml">
+            <tree string="Saisons">
+                <field name="name"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="licence_amount"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_judo_season_form" model="ir.ui.view">
+        <field name="name">judo.season.form</field>
+        <field name="model">judo.season</field>
+        <field name="arch" type="xml">
+            <form string="Saison">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="licence_amount"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_judo_season" model="ir.actions.act_window">
+        <field name="name">Saisons</field>
+        <field name="res_model">judo.season</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Adhésions -->
+    <record id="view_judo_membership_tree" model="ir.ui.view">
+        <field name="name">judo.membership.tree</field>
+        <field name="model">judo.membership</field>
+        <field name="arch" type="xml">
+            <tree string="Adhésions" decoration-success="state == 'active'" decoration-muted="state != 'active'">
+                <field name="member_id"/>
+                <field name="season_id"/>
+                <field name="date_start"/>
+                <field name="monthly_fee"/>
+                <field name="state" widget="badge"/>
+                <field name="resignation_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_judo_membership_form" model="ir.ui.view">
+        <field name="name">judo.membership.form</field>
+        <field name="model">judo.membership</field>
+        <field name="arch" type="xml">
+            <form string="Adhésion">
+                <header>
+                    <button name="action_renew" type="object" string="Renouveler sur la saison suivante"
+                            class="btn-primary" invisible="state != 'active'"/>
+                    <button name="action_resign" type="object" string="Désistement"
+                            class="btn-secondary" invisible="state != 'active'"
+                            confirm="Confirmer le désistement ? Les cotisations futures ne seront plus générées."/>
+                    <field name="state" widget="statusbar" statusbar_visible="active,renewed,resigned"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="member_id"/>
+                            <field name="season_id"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </group>
+                        <group>
+                            <field name="monthly_fee"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="previous_membership_id"/>
+                            <field name="resignation_date"/>
+                            <field name="resignation_reason" invisible="state != 'resigned'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Cotisations" name="fees">
+                            <field name="fee_ids">
+                                <tree>
+                                    <field name="period"/>
+                                    <field name="amount" sum="Total"/>
+                                    <field name="state" widget="badge"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Licence" name="licence">
+                            <field name="licence_ids">
+                                <tree>
+                                    <field name="amount"/>
+                                    <field name="state" widget="badge"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_judo_membership_search" model="ir.ui.view">
+        <field name="name">judo.membership.search</field>
+        <field name="model">judo.membership</field>
+        <field name="arch" type="xml">
+            <search string="Adhésions">
+                <field name="member_id"/>
+                <field name="season_id"/>
+                <filter name="active" string="Actives" domain="[('state', '=', 'active')]"/>
+                <filter name="resigned" string="Désistements" domain="[('state', '=', 'resigned')]"/>
+                <filter name="renewed" string="Renouvelées" domain="[('state', '=', 'renewed')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_season" string="Saison" context="{'group_by': 'season_id'}"/>
+                    <filter name="group_state" string="Statut" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_judo_membership" model="ir.actions.act_window">
+        <field name="name">Adhésions</field>
+        <field name="res_model">judo.membership</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_judo_membership_search"/>
+        <field name="context">{'search_default_active': 1, 'search_default_group_season': 1}</field>
+    </record>
+</odoo>

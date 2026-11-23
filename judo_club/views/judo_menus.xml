@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_judo_root" name="Club de judo" sequence="5"
+              groups="group_judo_user"/>
+
+    <!-- Adhérents -->
+    <menuitem id="menu_judo_members" name="Adhérents" parent="menu_judo_root" sequence="10"/>
+    <menuitem id="menu_judo_member_list" name="Adhérents" parent="menu_judo_members"
+              action="action_judo_member" sequence="10"/>
+    <menuitem id="menu_judo_membership" name="Adhésions" parent="menu_judo_members"
+              action="action_judo_membership" sequence="20"/>
+    <menuitem id="menu_judo_member_category" name="Catégories" parent="menu_judo_members"
+              action="action_judo_member_category" sequence="30"/>
+
+    <!-- Cours -->
+    <menuitem id="menu_judo_courses" name="Cours" parent="menu_judo_root" sequence="20"/>
+    <menuitem id="menu_judo_course_list" name="Cours et horaires" parent="menu_judo_courses"
+              action="action_judo_course" sequence="10"/>
+    <menuitem id="menu_judo_group_list" name="Groupes" parent="menu_judo_courses"
+              action="action_judo_group" sequence="20"/>
+    <menuitem id="menu_judo_enrollment_list" name="Inscriptions" parent="menu_judo_courses"
+              action="action_judo_enrollment" sequence="30"/>
+
+    <!-- Cotisations et licences -->
+    <menuitem id="menu_judo_billing" name="Cotisations" parent="menu_judo_root" sequence="30"/>
+    <menuitem id="menu_judo_fee_list" name="Cotisations mensuelles" parent="menu_judo_billing"
+              action="action_judo_fee" sequence="10"/>
+    <menuitem id="menu_judo_licence_list" name="Licences" parent="menu_judo_billing"
+              action="action_judo_licence" sequence="20"/>
+    <menuitem id="menu_judo_fee_generate" name="Générer les cotisations du mois"
+              parent="menu_judo_billing" action="action_judo_fee_generate" sequence="30"
+              groups="group_judo_treasurer"/>
+
+    <!-- Comptabilité -->
+    <menuitem id="menu_judo_accounting" name="Comptabilité" parent="menu_judo_root" sequence="40"
+              groups="group_judo_treasurer"/>
+    <menuitem id="menu_judo_financial_report" name="Situation financière" parent="menu_judo_accounting"
+              action="action_judo_financial_report" sequence="10"/>
+    <menuitem id="menu_judo_transaction_list" name="Transactions" parent="menu_judo_accounting"
+              action="action_judo_transaction" sequence="20"/>
+    <menuitem id="menu_judo_bank_account_list" name="Comptes et caisses" parent="menu_judo_accounting"
+              action="action_judo_bank_account" sequence="30"/>
+    <menuitem id="menu_judo_transaction_category_list" name="Catégories de transactions"
+              parent="menu_judo_accounting" action="action_judo_transaction_category" sequence="40"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_judo_configuration" name="Configuration" parent="menu_judo_root" sequence="90"
+              groups="group_judo_manager"/>
+    <menuitem id="menu_judo_season_list" name="Saisons" parent="menu_judo_configuration"
+              action="action_judo_season" sequence="10"/>
+</odoo>

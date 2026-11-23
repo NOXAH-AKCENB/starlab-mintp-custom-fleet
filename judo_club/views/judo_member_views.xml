@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Adhérents -->
+    <record id="view_judo_member_tree" model="ir.ui.view">
+        <field name="name">judo.member.tree</field>
+        <field name="model">judo.member</field>
+        <field name="arch" type="xml">
+            <tree string="Adhérents" decoration-danger="amount_due &gt; 0" decoration-muted="state == 'inactive'">
+                <field name="name"/>
+                <field name="age"/>
+                <field name="grade"/>
+                <field name="category_ids" widget="many2many_tags"/>
+                <field name="phone"/>
+                <field name="state" widget="badge"/>
+                <field name="amount_due" sum="Total non réglé"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_judo_member_form" model="ir.ui.view">
+        <field name="name">judo.member.form</field>
+        <field name="model">judo.member</field>
+        <field name="arch" type="xml">
+            <form string="Adhérent">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Identité">
+                            <field name="last_name"/>
+                            <field name="first_name"/>
+                            <field name="birth_date"/>
+                            <field name="age"/>
+                            <field name="gender"/>
+                            <field name="category_ids" widget="many2many_tags"/>
+                        </group>
+                        <group string="Contact">
+                            <field name="phone"/>
+                            <field name="email"/>
+                            <field name="address"/>
+                            <field name="emergency_contact"/>
+                            <field name="emergency_phone"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Judo">
+                            <field name="grade"/>
+                            <field name="dan"/>
+                            <field name="state"/>
+                        </group>
+                        <group string="Comptabilité">
+                            <field name="partner_id"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amount_due"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Adhésions" name="memberships">
+                            <field name="membership_ids">
+                                <tree>
+                                    <field name="season_id"/>
+                                    <field name="date_start"/>
+                                    <field name="monthly_fee"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="resignation_date"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Cours" name="courses">
+                            <field name="enrollment_ids">
+                                <tree>
+                                    <field name="course_id"/>
+                                    <field name="season_id"/>
+                                    <field name="date"/>
+                                    <field name="state" widget="badge"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Cotisations" name="fees">
+                            <field name="fee_ids">
+                                <tree>
+                                    <field name="period"/>
+                                    <field name="amount" sum="Total"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="invoice_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Licences" name="licences">
+                            <field name="licence_ids">
+                                <tree>
+                                    <field name="season_id"/>
+                                    <field name="amount"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="invoice_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_judo_member_search" model="ir.ui.view">
+        <field name="name">judo.member.search</field>
+        <field name="model">judo.member</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un adhérent">
+                <field name="name" string="Nom / prénom"
+                       filter_domain="['|', ('last_name', 'ilike', self), ('first_name', 'ilike', self)]"/>
+                <field name="phone"/>
+                <field name="category_ids"/>
+                <field name="grade"/>
+                <separator/>
+                <filter name="active_members" string="Actifs" domain="[('state', '=', 'active')]"/>
+                <filter name="inactive_members" string="Inactifs" domain="[('state', '=', 'inactive')]"/>
+                <filter name="archived" string="Archivés" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_grade" string="Ceinture" context="{'group_by': 'grade'}"/>
+                    <filter name="group_state" string="Statut" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_judo_member" model="ir.actions.act_window">
+        <field name="name">Adhérents</field>
+        <field name="res_model">judo.member</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_judo_member_search"/>
+        <field name="context">{'search_default_active_members': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Enregistrez votre premier adhérent</p>
+        </field>
+    </record>
+
+    <!-- Catégories d'adhérents -->
+    <record id="view_judo_member_category_tree" model="ir.ui.view">
+        <field name="name">judo.member.category.tree</field>
+        <field name="model">judo.member.category</field>
+        <field name="arch" type="xml">
+            <tree string="Catégories">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="member_count"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_judo_member_category_form" model="ir.ui.view">
+        <field name="name">judo.member.category.form</field>
+        <field name="model">judo.member.category</field>
+        <field name="arch" type="xml">
+            <form string="Catégorie">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="member_count"/>
+                        <field name="description"/>
+                        <field name="member_ids" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_judo_member_category" model="ir.actions.act_window">
+        <field name="name">Catégories d'adhérents</field>
+        <field name="res_model">judo.member.category</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

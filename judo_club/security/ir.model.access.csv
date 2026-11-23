@@ -1,0 +1,27 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_judo_season_user,judo.season user,model_judo_season,group_judo_user,1,0,0,0
+access_judo_season_manager,judo.season manager,model_judo_season,group_judo_manager,1,1,1,1
+access_judo_member_category_user,judo.member.category user,model_judo_member_category,group_judo_user,1,1,1,0
+access_judo_member_category_manager,judo.member.category manager,model_judo_member_category,group_judo_manager,1,1,1,1
+access_judo_member_user,judo.member user,model_judo_member,group_judo_user,1,1,1,0
+access_judo_member_manager,judo.member manager,model_judo_member,group_judo_manager,1,1,1,1
+access_judo_membership_user,judo.membership user,model_judo_membership,group_judo_user,1,1,1,0
+access_judo_membership_manager,judo.membership manager,model_judo_membership,group_judo_manager,1,1,1,1
+access_judo_group_user,judo.group user,model_judo_group,group_judo_user,1,1,1,0
+access_judo_group_manager,judo.group manager,model_judo_group,group_judo_manager,1,1,1,1
+access_judo_course_user,judo.course user,model_judo_course,group_judo_user,1,1,1,0
+access_judo_course_manager,judo.course manager,model_judo_course,group_judo_manager,1,1,1,1
+access_judo_enrollment_user,judo.enrollment user,model_judo_enrollment,group_judo_user,1,1,1,0
+access_judo_enrollment_manager,judo.enrollment manager,model_judo_enrollment,group_judo_manager,1,1,1,1
+access_judo_fee_user,judo.fee user,model_judo_fee,group_judo_user,1,0,0,0
+access_judo_fee_treasurer,judo.fee treasurer,model_judo_fee,group_judo_treasurer,1,1,1,0
+access_judo_fee_manager,judo.fee manager,model_judo_fee,group_judo_manager,1,1,1,1
+access_judo_licence_user,judo.licence user,model_judo_licence,group_judo_user,1,0,0,0
+access_judo_licence_treasurer,judo.licence treasurer,model_judo_licence,group_judo_treasurer,1,1,1,0
+access_judo_licence_manager,judo.licence manager,model_judo_licence,group_judo_manager,1,1,1,1
+access_judo_bank_account_treasurer,judo.bank.account treasurer,model_judo_bank_account,group_judo_treasurer,1,1,1,0
+access_judo_bank_account_manager,judo.bank.account manager,model_judo_bank_account,group_judo_manager,1,1,1,1
+access_judo_transaction_category_treasurer,judo.transaction.category treasurer,model_judo_transaction_category,group_judo_treasurer,1,1,1,0
+access_judo_transaction_category_manager,judo.transaction.category manager,model_judo_transaction_category,group_judo_manager,1,1,1,1
+access_judo_transaction_treasurer,judo.transaction treasurer,model_judo_transaction,group_judo_treasurer,1,1,1,0
+access_judo_transaction_manager,judo.transaction manager,model_judo_transaction,group_judo_manager,1,1,1,1

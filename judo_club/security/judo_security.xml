@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_judo" model="ir.module.category">
+        <field name="name">Club de judo</field>
+        <field name="sequence">40</field>
+    </record>
+
+    <!-- Secrétariat : adhérents, adhésions, cours, lecture des cotisations -->
+    <record id="group_judo_user" model="res.groups">
+        <field name="name">Secrétariat</field>
+        <field name="category_id" ref="module_category_judo"/>
+        <field name="comment">Gère les adhérents, les adhésions et les inscriptions aux cours.</field>
+    </record>
+
+    <!-- Trésorerie : facturation, cotisations, licences, transactions -->
+    <record id="group_judo_treasurer" model="res.groups">
+        <field name="name">Trésorier</field>
+        <field name="category_id" ref="module_category_judo"/>
+        <field name="implied_ids" eval="[(4, ref('group_judo_user')), (4, ref('account.group_account_invoice'))]"/>
+        <field name="comment">Génère les cotisations, facture, saisit les transactions et consulte la situation financière.</field>
+    </record>
+
+    <!-- Administration : tout, y compris la configuration -->
+    <record id="group_judo_manager" model="res.groups">
+        <field name="name">Administrateur</field>
+        <field name="category_id" ref="module_category_judo"/>
+        <field name="implied_ids" eval="[(4, ref('group_judo_treasurer'))]"/>
+        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
+        <field name="comment">Accès complet, y compris la configuration et la suppression des données.</field>
+    </record>
+</odoo>

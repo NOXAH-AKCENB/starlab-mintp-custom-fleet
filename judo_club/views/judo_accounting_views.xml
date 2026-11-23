@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Comptes bancaires / caisses -->
+    <record id="view_judo_bank_account_tree" model="ir.ui.view">
+        <field name="name">judo.bank.account.tree</field>
+        <field name="model">judo.bank.account</field>
+        <field name="arch" type="xml">
+            <tree string="Comptes">
+                <field name="name"/>
+                <field name="opening_date"/>
+                <field name="opening_balance"/>
+                <field name="balance"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_judo_bank_account_form" model="ir.ui.view">
+        <field name="name">judo.bank.account.form</field>
+        <field name="model">judo.bank.account</field>
+        <field name="arch" type="xml">
+            <form string="Compte">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="opening_date"/>
+                            <field name="opening_balance"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="balance"/>
+                        </group>
+                    </group>
+                    <field name="transaction_ids">
+                        <tree>
+                            <field name="date"/>
+                            <field name="name"/>
+                            <field name="category_id"/>
+                            <field name="signed_amount" sum="Solde des mouvements"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_judo_bank_account" model="ir.actions.act_window">
+        <field name="name">Comptes bancaires et caisses</field>
+        <field name="res_model">judo.bank.account</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Catégories de transactions -->
+    <record id="view_judo_transaction_category_tree" model="ir.ui.view">
+        <field name="name">judo.transaction.category.tree</field>
+        <field name="model">judo.transaction.category</field>
+        <field name="arch" type="xml">
+            <tree string="Catégories">
+                <field name="name"/>
+                <field name="type"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_judo_transaction_category" model="ir.actions.act_window">
+        <field name="name">Catégories de transactions</field>
+        <field name="res_model">judo.transaction.category</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Transactions -->
+    <record id="view_judo_transaction_tree" model="ir.ui.view">
+        <field name="name">judo.transaction.tree</field>
+        <field name="model">judo.transaction</field>
+        <field name="arch" type="xml">
+            <tree string="Transactions" decoration-danger="signed_amount &lt; 0" decoration-success="signed_amount &gt; 0">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="bank_account_id"/>
+                <field name="category_id"/>
+                <field name="type" optional="hide"/>
+                <field name="signed_amount" sum="Solde"/>
+                <field name="reference" optional="show"/>
+                <field name="member_id" optional="hide"/>
+                <field name="currency_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_judo_transaction_form" model="ir.ui.view">
+        <field name="name">judo.transaction.form</field>
+        <field name="model">judo.transaction</field>
+        <field name="arch" type="xml">
+            <form string="Transaction">
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="bank_account_id"/>
+                            <field name="category_id"/>
+                            <field name="type"/>
+                            <field name="amount"/>
+                            <field name="signed_amount"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="member_id"/>
+                            <field name="partner_id"/>
+                            <field name="reference"/>
+                        </group>
+                    </group>
+                    <field name="note" placeholder="Détails, justificatif…"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_judo_transaction_search" model="ir.ui.view">
+        <field name="name">judo.transaction.search</field>
+        <field name="model">judo.transaction</field>
+        <field name="arch" type="xml">
+            <search string="Transactions">
+                <field name="name"/>
+                <field name="reference"/>
+                <field name="member_id"/>
+                <field name="partner_id"/>
+                <field name="category_id"/>
+                <filter name="income" string="Recettes" domain="[('type', '=', 'income')]"/>
+                <filter name="expense" string="Dépenses" domain="[('type', '=', 'expense')]"/>
+                <filter name="refunds" string="Remboursements"
+                        domain="[('type', 'in', ['refund_in', 'refund_out'])]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_month" string="Mois" context="{'group_by': 'date:month'}"/>
+                    <filter name="group_type" string="Sens" context="{'group_by': 'type'}"/>
+                    <filter name="group_category" string="Catégorie" context="{'group_by': 'category_id'}"/>
+                    <filter name="group_bank" string="Compte" context="{'group_by': 'bank_account_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Analyse : recettes et dépenses dans le temps -->
+    <record id="view_judo_transaction_graph" model="ir.ui.view">
+        <field name="name">judo.transaction.graph</field>
+        <field name="model">judo.transaction</field>
+        <field name="arch" type="xml">
+            <graph string="Recettes et dépenses par mois" type="bar" sample="1">
+                <field name="date" interval="month"/>
+                <field name="type"/>
+                <field name="signed_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_judo_transaction_pivot" model="ir.ui.view">
+        <field name="name">judo.transaction.pivot</field>
+        <field name="model">judo.transaction</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse financière">
+                <field name="type" type="row"/>
+                <field name="date" interval="month" type="col"/>
+                <field name="signed_amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_judo_transaction" model="ir.actions.act_window">
+        <field name="name">Transactions</field>
+        <field name="res_model">judo.transaction</field>
+        <field name="view_mode">tree,form,graph,pivot</field>
+        <field name="search_view_id" ref="view_judo_transaction_search"/>
+    </record>
+
+    <!-- Situation financière -->
+    <record id="view_judo_financial_report_form" model="ir.ui.view">
+        <field name="name">judo.financial.report.form</field>
+        <field name="model">judo.financial.report</field>
+        <field name="arch" type="xml">
+            <form string="Situation financière">
+                <group>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="bank_account_id"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                </group>
+                <group>
+                    <group string="Compte de résultat">
+                        <field name="total_income"/>
+                        <field name="total_expense"/>
+                        <field name="result"/>
+                    </group>
+                    <group string="Trésorerie">
+                        <field name="opening_balance"/>
+                        <field name="cash_in"/>
+                        <field name="cash_out"/>
+                        <field name="cash_flow"/>
+                        <field name="closing_balance"/>
+                    </group>
+                </group>
+                <group>
+                    <group string="Remboursements">
+                        <field name="refunds_in"/>
+                        <field name="refunds_out"/>
+                    </group>
+                    <group string="Bilan simplifié">
+                        <field name="receivables"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_open_transactions" type="object" string="Voir les transactions"
+                            class="btn-primary"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_judo_financial_report" model="ir.actions.act_window">
+        <field name="name">Situation financière</field>
+        <field name="res_model">judo.financial.report</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

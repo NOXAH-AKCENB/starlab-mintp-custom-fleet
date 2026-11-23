@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Cotisations mensuelles -->
+    <record id="view_judo_fee_tree" model="ir.ui.view">
+        <field name="name">judo.fee.tree</field>
+        <field name="model">judo.fee</field>
+        <field name="arch" type="xml">
+            <tree string="Cotisations" decoration-success="state == 'paid'" decoration-info="state == 'invoiced'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="period"/>
+                <field name="member_id"/>
+                <field name="amount" sum="Total"/>
+                <field name="state" widget="badge"/>
+                <field name="invoice_id"/>
+                <field name="invoice_date_due"/>
+                <field name="payment_state" optional="show"/>
+                <field name="last_reminder_date" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_judo_fee_form" model="ir.ui.view">
+        <field name="name">judo.fee.form</field>
+        <field name="model">judo.fee</field>
+        <field name="arch" type="xml">
+            <form string="Cotisation">
+                <header>
+                    <button name="action_cancel_billing" type="object" string="Annuler"
+                            invisible="state in ('paid', 'cancelled')"
+                            confirm="Annuler cette cotisation ?"/>
+                    <field name="state" widget="statusbar" statusbar_visible="to_invoice,invoiced,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="member_id"/>
+                            <field name="membership_id"/>
+                            <field name="period"/>
+                            <field name="amount"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="invoice_id"/>
+                            <field name="invoice_date_due"/>
+                            <field name="payment_state"/>
+                            <field name="last_reminder_date"/>
+                            <field name="cancelled"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_judo_fee_search" model="ir.ui.view">
+        <field name="name">judo.fee.search</field>
+        <field name="model">judo.fee</field>
+        <field name="arch" type="xml">
+            <search string="Cotisations">
+                <field name="member_id"/>
+                <field name="invoice_id"/>
+                <filter name="to_invoice" string="À facturer" domain="[('state', '=', 'to_invoice')]"/>
+                <filter name="invoiced" string="Facturées non payées" domain="[('state', '=', 'invoiced')]"/>
+                <filter name="overdue" string="En retard"
+                        domain="[('state', '=', 'invoiced'), ('invoice_date_due', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="paid" string="Payées" domain="[('state', '=', 'paid')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_period" string="Mois" context="{'group_by': 'period:month'}"/>
+                    <filter name="group_member" string="Adhérent" context="{'group_by': 'member_id'}"/>
+                    <filter name="group_state" string="Statut" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_judo_fee" model="ir.actions.act_window">
+        <field name="name">Cotisations mensuelles</field>
+        <field name="res_model">judo.fee</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_judo_fee_search"/>
+        <field name="context">{'search_default_to_invoice': 1}</field>
+    </record>
+
+    <!-- Licences -->
+    <record id="view_judo_licence_tree" model="ir.ui.view">
+        <field name="name">judo.licence.tree</field>
+        <field name="model">judo.licence</field>
+        <field name="arch" type="xml">
+            <tree string="Licences" decoration-success="state == 'paid'" decoration-info="state == 'invoiced'">
+                <field name="season_id"/>
+                <field name="member_id"/>
+                <field name="amount" sum="Total"/>
+                <field name="state" widget="badge"/>
+                <field name="invoice_id"/>
+                <field name="last_reminder_date" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_judo_licence_form" model="ir.ui.view">
+        <field name="name">judo.licence.form</field>
+        <field name="model">judo.licence</field>
+        <field name="arch" type="xml">
+            <form string="Licence">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="to_invoice,invoiced,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="member_id"/>
+                            <field name="season_id"/>
+                            <field name="amount"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="invoice_id"/>
+                            <field name="invoice_date_due"/>
+                            <field name="payment_state"/>
+                            <field name="last_reminder_date"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_judo_licence_search" model="ir.ui.view">
+        <field name="name">judo.licence.search</field>
+        <field name="model">judo.licence</field>
+        <field name="arch" type="xml">
+            <search string="Licences">
+                <field name="member_id"/>
+                <field name="season_id"/>
+                <filter name="to_invoice" string="À facturer" domain="[('state', '=', 'to_invoice')]"/>
+                <filter name="invoiced" string="Facturées non payées" domain="[('state', '=', 'invoiced')]"/>
+                <filter name="paid" string="Payées" domain="[('state', '=', 'paid')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_season" string="Saison" context="{'group_by': 'season_id'}"/>
+                    <filter name="group_state" string="Statut" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_judo_licence" model="ir.actions.act_window">
+        <field name="name">Licences</field>
+        <field name="res_model">judo.licence</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_judo_licence_search"/>
+        <field name="context">{'search_default_to_invoice': 1}</field>
+    </record>
+
+    <!-- Génération mensuelle des cotisations -->
+    <record id="view_judo_fee_generate_form" model="ir.ui.view">
+        <field name="name">judo.fee.generate.wizard.form</field>
+        <field name="model">judo.fee.generate.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Générer les cotisations du mois">
+                <group>
+                    <field name="period"/>
+                </group>
+                <p>Une cotisation est créée pour chaque adhésion active sur ce mois. Les mois déjà générés sont ignorés.</p>
+                <footer>
+                    <button name="action_generate" type="object" string="Générer" class="btn-primary"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_judo_fee_generate" model="ir.actions.act_window">
+        <field name="name">Générer les cotisations du mois</field>
+        <field name="res_model">judo.fee.generate.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Facturation (accessible depuis la liste des cotisations et des licences) -->
+    <record id="view_judo_invoice_wizard_form" model="ir.ui.view">
+        <field name="name">judo.invoice.wizard.form</field>
+        <field name="model">judo.invoice.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Facturer">
+                <group>
+                    <group string="Éléments à facturer">
+                        <field name="fee_ids" widget="many2many_tags"/>
+                        <field name="licence_ids" widget="many2many_tags"/>
+                    </group>
+                    <group string="Facture">
+                        <field name="invoice_date"/>
+                        <field name="invoice_date_due"/>
+                        <field name="discount_percent"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                </group>
+                <group string="Frais supplémentaire (optionnel)">
+                    <field name="extra_label"/>
+                    <field name="extra_amount"/>
+                </group>
+                <group string="Mention">
+                    <field name="note" nolabel="1" placeholder="Texte affiché sur la facture…"/>
+                </group>
+                <footer>
+                    <button name="action_create_invoices" type="object" string="Créer les factures" class="btn-primary"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_judo_invoice_wizard_fee" model="ir.actions.act_window">
+        <field name="name">Facturer les cotisations</field>
+        <field name="res_model">judo.invoice.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_judo_fee"/>
+        <field name="binding_view_types">list</field>
+    </record>
+
+    <record id="action_judo_invoice_wizard_licence" model="ir.actions.act_window">
+        <field name="name">Facturer les licences</field>
+        <field name="res_model">judo.invoice.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_judo_licence"/>
+        <field name="binding_view_types">list</field>
+    </record>
+</odoo>

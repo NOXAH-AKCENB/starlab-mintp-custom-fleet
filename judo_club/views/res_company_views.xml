@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_company_form_judo" model="ir.ui.view">
+        <field name="name">res.company.form.judo</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Club de judo" name="judo_club">
+                    <group>
+                        <group string="Cotisations et rappels">
+                            <field name="judo_monthly_fee"/>
+                            <field name="judo_reminder_days"/>
+                        </group>
+                        <group string="Factures">
+                            <field name="judo_bank_details"/>
+                        </group>
+                    </group>
+                    <group string="Mention en pied de facture">
+                        <field name="judo_invoice_note" nolabel="1"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
