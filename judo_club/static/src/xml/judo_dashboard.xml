@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="judo_club.Dashboard">
+        <div class="judo-dashboard o_action">
+            <div t-if="state.loading" class="judo-loading">Chargement du tableau de bord…</div>
+
+            <t t-else="">
+                <h2 class="judo-title">Tableau de bord du club</h2>
+
+                <!-- Indicateurs -->
+                <div class="judo-kpis">
+                    <div class="judo-kpi">
+                        <span class="judo-kpi-label">Adhérents actifs</span>
+                        <span class="judo-kpi-value" t-esc="state.data.kpis.members_active"/>
+                        <span class="judo-kpi-sub">sur <t t-esc="state.data.kpis.members_total"/> au total</span>
+                    </div>
+                    <div class="judo-kpi judo-clickable" t-on-click="openFees">
+                        <span class="judo-kpi-label">Montant non réglé</span>
+                        <span class="judo-kpi-value" t-esc="money(state.data.kpis.amount_due)"/>
+                        <span class="judo-kpi-sub">cotisations et licences</span>
+                    </div>
+                    <div class="judo-kpi judo-clickable" t-on-click="openFees">
+                        <span class="judo-kpi-label">À facturer</span>
+                        <span class="judo-kpi-value" t-esc="state.data.kpis.to_invoice"/>
+                        <span class="judo-kpi-sub">éléments en attente de facture</span>
+                    </div>
+                    <div class="judo-kpi judo-kpi-alert" t-if="state.data.kpis.overdue" t-on-click="openFees">
+                        <span class="judo-kpi-label">Cotisations en retard</span>
+                        <span class="judo-kpi-value" t-esc="state.data.kpis.overdue"/>
+                        <span class="judo-kpi-sub">échéance dépassée</span>
+                    </div>
+                    <div class="judo-kpi">
+                        <span class="judo-kpi-label">Solde des comptes</span>
+                        <span class="judo-kpi-value" t-esc="money(state.data.kpis.balance)"/>
+                        <span class="judo-kpi-sub">tous comptes et caisses</span>
+                    </div>
+                </div>
+
+                <!-- Recettes / dépenses sur 12 mois -->
+                <div class="judo-card">
+                    <div class="judo-card-header">
+                        <h3>Recettes et dépenses sur 12 mois</h3>
+                        <span class="judo-legend">
+                            <i class="judo-dot judo-dot-income"/> Recettes
+                            <i class="judo-dot judo-dot-expense"/> Dépenses
+                        </span>
+                    </div>
+                    <div class="judo-chart">
+                        <t t-foreach="state.data.series" t-as="s" t-key="s.label">
+                            <div class="judo-column">
+                                <div class="judo-bars">
+                                    <div class="judo-bar judo-bar-income"
+                                         t-att-style="'height: ' + barHeight(s.income) + '%'"
+                                         t-att-title="money(s.income)"/>
+                                    <div class="judo-bar judo-bar-expense"
+                                         t-att-style="'height: ' + barHeight(s.expense) + '%'"
+                                         t-att-title="money(s.expense)"/>
+                                </div>
+                                <span class="judo-column-label" t-esc="s.label"/>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Dernières transactions -->
+                <div class="judo-card">
+                    <div class="judo-card-header">
+                        <h3>Dernières transactions</h3>
+                        <a href="#" t-on-click.prevent="openTransactions">Voir toutes les transactions</a>
+                    </div>
+                    <table class="judo-table">
+                        <tbody>
+                            <t t-if="!state.data.recent.length">
+                                <tr><td colspan="3" class="judo-empty">Aucune transaction pour le moment.</td></tr>
+                            </t>
+                            <t t-foreach="state.data.recent" t-as="t" t-key="t.id">
+                                <tr class="judo-clickable" t-on-click="() => openTransaction(t.id)">
+                                    <td t-esc="t.date"/>
+                                    <td t-esc="t.name"/>
+                                    <td t-attf-class="judo-amount #{t.amount &lt; 0 ? 'judo-neg' : 'judo-pos'}"
+                                        t-esc="money(t.amount)"/>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

@@ -84,6 +84,34 @@ class JudoFinancialReport(models.TransientModel):
                     ('company_id', '=', rec.company_id.id), ('state', '=', 'invoiced')]))
             rec.receivables = sum(billables.mapped('invoice_id').mapped('amount_residual'))
 
+    def _get_transactions(self):
+        """Transactions de la période, triées par date (pour le relevé PDF)."""
+        self.ensure_one()
+        domain = [('date', '>=', self.date_from), ('date', '<=', self.date_to),
+                  ('company_id', '=', self.company_id.id)]
+        if self.bank_account_id:
+            domain.append(('bank_account_id', '=', self.bank_account_id.id))
+        return self.env['judo.transaction'].search(domain, order='date asc, id asc')
+
+    def _monthly_breakdown(self):
+        """Totaux par mois : recettes, dépenses et flux net."""
+        self.ensure_one()
+        months = {}
+        for tx in self._get_transactions():
+            key = tx.date.strftime('%Y-%m')
+            row = months.setdefault(key, {'label': tx.date.strftime('%m/%Y'),
+                                          'income': 0.0, 'expense': 0.0, 'net': 0.0})
+            if tx.type == 'income':
+                row['income'] += tx.amount
+            elif tx.type == 'expense':
+                row['expense'] += tx.amount
+            row['net'] += tx.signed_amount
+        return [months[k] for k in sorted(months)]
+
+    def action_print_pdf(self):
+        self.ensure_one()
+        return self.env.ref('judo_club.action_report_financial_statement').report_action(self)
+
     def action_open_transactions(self):
         self.ensure_one()
         domain = [('date', '>=', self.date_from), ('date', '<=', self.date_to)]

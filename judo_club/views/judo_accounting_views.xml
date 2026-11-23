@@ -210,8 +210,10 @@
                     </group>
                 </group>
                 <footer>
-                    <button name="action_open_transactions" type="object" string="Voir les transactions"
+                    <button name="action_print_pdf" type="object" string="Imprimer le relevé (PDF)"
                             class="btn-primary"/>
+                    <button name="action_open_transactions" type="object" string="Voir les transactions"
+                            class="btn-secondary"/>
                     <button string="Fermer" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>

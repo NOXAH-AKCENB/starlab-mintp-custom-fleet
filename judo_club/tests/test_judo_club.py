@@ -107,3 +107,21 @@ class TestJudoClub(TransactionCase):
         self.assertEqual(report.total_expense, 20000)
         self.assertEqual(report.result, 30000)
         self.assertEqual(report.closing_balance, 130000)
+        self.assertEqual(report._monthly_breakdown()[0]['net'], 30000)
+
+    def test_financial_report_pdf_action(self):
+        report = self.env['judo.financial.report'].create({
+            'date_from': date(2026, 10, 1),
+            'date_to': date(2026, 10, 31),
+        })
+        action = report.action_print_pdf()
+        self.assertEqual(action.get('report_name'), 'judo_club.report_financial_statement')
+        self.assertEqual(action.get('type'), 'ir.actions.report')
+
+    def test_dashboard_data_shape(self):
+        self._membership()
+        data = self.env['judo.dashboard'].get_dashboard_data()
+        self.assertEqual(len(data['series']), 12)
+        self.assertEqual(data['kpis']['members_active'], 1)
+        self.assertIn('balance', data['kpis'])
+        self.assertIn('amount_due', data['kpis'])

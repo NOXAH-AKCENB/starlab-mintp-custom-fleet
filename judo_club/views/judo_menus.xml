@@ -3,6 +3,9 @@
     <menuitem id="menu_judo_root" name="Club de judo" sequence="5"
               groups="group_judo_user"/>
 
+    <menuitem id="menu_judo_dashboard" name="Tableau de bord" parent="menu_judo_root" sequence="1"
+              action="action_judo_dashboard"/>
+
     <!-- Adhérents -->
     <menuitem id="menu_judo_members" name="Adhérents" parent="menu_judo_root" sequence="10"/>
     <menuitem id="menu_judo_member_list" name="Adhérents" parent="menu_judo_members"

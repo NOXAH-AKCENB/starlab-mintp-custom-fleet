@@ -6,3 +6,4 @@ from . import judo_membership
 from . import judo_course
 from . import judo_billing
 from . import judo_accounting
+from . import judo_dashboard

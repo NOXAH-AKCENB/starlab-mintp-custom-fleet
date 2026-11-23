@@ -12,6 +12,8 @@
         'security/judo_security.xml',
         'security/ir.model.access.csv',
         'data/judo_data.xml',
+        'report/judo_report_templates.xml',
+        'views/judo_dashboard_views.xml',
         'views/judo_member_views.xml',
         'views/judo_membership_views.xml',
         'views/judo_course_views.xml',
@@ -20,6 +22,13 @@
         'views/res_company_views.xml',
         'views/judo_menus.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'judo_club/static/src/js/judo_dashboard.js',
+            'judo_club/static/src/xml/judo_dashboard.xml',
+            'judo_club/static/src/scss/judo_dashboard.scss',
+        ],
+    },
     'installable': True,
     'application': True,
     'auto_install': False,

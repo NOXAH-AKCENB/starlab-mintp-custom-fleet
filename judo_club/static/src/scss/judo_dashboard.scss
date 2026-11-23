@@ -1,0 +1,98 @@
+.judo-dashboard {
+    padding: 16px 24px;
+    overflow-y: auto;
+
+    .judo-title { margin-bottom: 16px; }
+    .judo-loading { color: #6c757d; padding: 24px; }
+
+    .judo-kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .judo-kpi {
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 12px 14px;
+
+        .judo-kpi-label { font-size: 0.85rem; color: #6c757d; }
+        .judo-kpi-value { font-size: 1.5rem; font-weight: 600; }
+        .judo-kpi-sub { font-size: 0.75rem; color: #868e96; }
+    }
+    .judo-kpi-alert { border-color: #dc3545; .judo-kpi-value { color: #dc3545; } }
+
+    .judo-card {
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+
+        .judo-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            h3 { font-size: 1rem; margin: 0; }
+        }
+    }
+
+    .judo-legend { font-size: 0.8rem; color: #6c757d; }
+    .judo-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        margin: 0 4px 0 10px;
+    }
+    .judo-dot-income, .judo-bar-income { background: #28a745; }
+    .judo-dot-expense, .judo-bar-expense { background: #dc3545; }
+
+    .judo-chart {
+        display: flex;
+        align-items: flex-end;
+        gap: 6px;
+        height: 220px;
+        margin-top: 12px;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .judo-column {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+    }
+    .judo-bars {
+        display: flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 100%;
+        width: 100%;
+        justify-content: center;
+    }
+    .judo-bar {
+        width: 40%;
+        min-height: 1px;
+        border-radius: 3px 3px 0 0;
+    }
+    .judo-column-label { font-size: 0.7rem; color: #6c757d; margin-top: 4px; }
+
+    .judo-table {
+        width: 100%;
+        margin-top: 8px;
+        td { padding: 6px 4px; border-top: 1px solid #f1f3f5; }
+        .judo-amount { text-align: right; white-space: nowrap; }
+        .judo-pos { color: #28a745; }
+        .judo-neg { color: #dc3545; }
+        .judo-empty { color: #868e96; text-align: center; }
+    }
+
+    .judo-clickable { cursor: pointer; }
+    .judo-table tr.judo-clickable:hover { background: #f8f9fa; }
+}

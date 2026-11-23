@@ -69,7 +69,14 @@ Il couvre le cahier des charges « Logiciel de gestion de club de judo ».
   résultat légal : la comptabilité officielle reste dans le module Comptabilité d'Odoo.
 - Le modèle de facture reste celui d'Odoo ; seuls la mention et les coordonnées bancaires
   sont personnalisables. Un gabarit QWeb dédié peut être ajouté.
-- Pas de paiement en ligne, pas de notification WhatsApp/SMS, pas d'export PDF des relevés.
+- Pas de paiement en ligne, pas de notification WhatsApp/SMS.
+
+## Documentation
+
+- Guide utilisateur illustré : [`docs/guide_utilisateur.md`](docs/guide_utilisateur.md) (mis à jour à chaque évolution).
+- Journal des modifications : [`CHANGELOG.md`](CHANGELOG.md).
+- Relevés financiers en PDF : Comptabilité → Situation financière → *Imprimer le relevé (PDF)*.
+- Tableau de bord : menu *Club de judo → Tableau de bord*.
 - Le partage des revenus ou le préfinancement par la Fédération (cf. chapitre « Moyens de
   financement » du cahier des charges) relèvent du contrat commercial, pas du logiciel.
 

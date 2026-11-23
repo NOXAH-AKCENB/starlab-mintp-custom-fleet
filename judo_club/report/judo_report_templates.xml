@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_financial_statement" model="ir.actions.report">
+        <field name="name">Relevé financier du club</field>
+        <field name="model">judo.financial.report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">judo_club.report_financial_statement</field>
+        <field name="report_file">judo_club.report_financial_statement</field>
+        <field name="print_report_name">'Releve_financier_%s' % (object.date_to or '')</field>
+    </record>
+
+    <template id="report_financial_statement">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Relevé financier</h2>
+                        <p>
+                            <strong>Période :</strong>
+                            du <span t-out="o.date_from"/> au <span t-out="o.date_to"/><br/>
+                            <strong>Compte :</strong>
+                            <span t-out="o.bank_account_id.name or 'Tous les comptes et caisses'"/>
+                        </p>
+
+                        <h4>Compte de résultat</h4>
+                        <table class="table table-sm">
+                            <tr>
+                                <td>Total des recettes</td>
+                                <td class="text-end"><span t-out="o.total_income" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                            <tr>
+                                <td>Total des dépenses</td>
+                                <td class="text-end"><span t-out="o.total_expense" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                            <tr class="fw-bold">
+                                <td>Résultat de la période</td>
+                                <td class="text-end"><span t-out="o.result" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                        </table>
+
+                        <h4>Trésorerie</h4>
+                        <table class="table table-sm">
+                            <tr>
+                                <td>Solde d'ouverture</td>
+                                <td class="text-end"><span t-out="o.opening_balance" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                            <tr>
+                                <td>Entrées de trésorerie</td>
+                                <td class="text-end"><span t-out="o.cash_in" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                            <tr>
+                                <td>Sorties de trésorerie</td>
+                                <td class="text-end"><span t-out="o.cash_out" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                            <tr class="fw-bold">
+                                <td>Solde de clôture</td>
+                                <td class="text-end"><span t-out="o.closing_balance" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                        </table>
+
+                        <h4>Autres éléments</h4>
+                        <table class="table table-sm">
+                            <tr>
+                                <td>Remboursements reçus</td>
+                                <td class="text-end"><span t-out="o.refunds_in" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                            <tr>
+                                <td>Remboursements versés</td>
+                                <td class="text-end"><span t-out="o.refunds_out" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                            <tr>
+                                <td>Factures clients à encaisser (à ce jour)</td>
+                                <td class="text-end"><span t-out="o.receivables" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                        </table>
+
+                        <h4>Détail mensuel</h4>
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Mois</th>
+                                    <th class="text-end">Recettes</th>
+                                    <th class="text-end">Dépenses</th>
+                                    <th class="text-end">Flux net</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o._monthly_breakdown()" t-as="m">
+                                    <tr>
+                                        <td><span t-out="m['label']"/></td>
+                                        <td class="text-end"><span t-out="m['income']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                        <td class="text-end"><span t-out="m['expense']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                        <td class="text-end"><span t-out="m['net']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <h4>Détail des transactions</h4>
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Libellé</th>
+                                    <th>Catégorie</th>
+                                    <th>Référence</th>
+                                    <th class="text-end">Montant</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o._get_transactions()" t-as="tx">
+                                    <tr>
+                                        <td><span t-out="tx.date"/></td>
+                                        <td><span t-out="tx.name"/></td>
+                                        <td><span t-out="tx.category_id.name"/></td>
+                                        <td><span t-out="tx.reference or ''"/></td>
+                                        <td class="text-end"><span t-out="tx.signed_amount" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

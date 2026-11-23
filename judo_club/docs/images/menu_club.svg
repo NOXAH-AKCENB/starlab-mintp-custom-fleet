@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 360" font-family="Arial, Helvetica, sans-serif">
+  <rect width="760" height="360" fill="#ffffff"/>
+  <rect x="20" y="20" width="720" height="40" rx="6" fill="#714B67"/>
+  <text x="40" y="46" fill="#ffffff" font-size="16" font-weight="bold">Club de judo</text>
+  <g font-size="13" fill="#ffffff">
+    <text x="190" y="46">Tableau de bord</text>
+    <text x="330" y="46">Adhérents</text>
+    <text x="420" y="46">Cours</text>
+    <text x="490" y="46">Cotisations</text>
+    <text x="590" y="46">Comptabilité</text>
+    <text x="700" y="46">Configuration</text>
+  </g>
+  <g font-size="13" fill="#212529">
+    <rect x="20" y="80" width="170" height="250" rx="6" fill="#f8f9fa" stroke="#dee2e6"/>
+    <text x="36" y="104" font-weight="bold">Tableau de bord</text>
+    <text x="36" y="130" fill="#6c757d">Indicateurs, graphique</text>
+    <text x="36" y="150" fill="#6c757d">12 mois, dernières</text>
+    <text x="36" y="170" fill="#6c757d">transactions</text>
+
+    <rect x="210" y="80" width="170" height="250" rx="6" fill="#f8f9fa" stroke="#dee2e6"/>
+    <text x="226" y="104" font-weight="bold">Adhérents</text>
+    <text x="226" y="130">Adhérents</text>
+    <text x="226" y="150">Adhésions</text>
+    <text x="226" y="170">Catégories</text>
+
+    <rect x="400" y="80" width="170" height="250" rx="6" fill="#f8f9fa" stroke="#dee2e6"/>
+    <text x="416" y="104" font-weight="bold">Cours</text>
+    <text x="416" y="130">Cours et horaires</text>
+    <text x="416" y="150">Groupes</text>
+    <text x="416" y="170">Inscriptions</text>
+
+    <rect x="590" y="80" width="150" height="250" rx="6" fill="#f8f9fa" stroke="#dee2e6"/>
+    <text x="606" y="104" font-weight="bold">Cotisations</text>
+    <text x="606" y="130">Cotisations mensuelles</text>
+    <text x="606" y="150">Licences</text>
+    <text x="606" y="170">Générer le mois</text>
+    <text x="606" y="200" fill="#6c757d" font-size="11">Trésorier</text>
+  </g>
+  <text x="20" y="352" font-size="12" fill="#6c757d">Menus réservés au trésorier : Cotisations → Générer, et Comptabilité. Configuration : administrateur.</text>
+</svg>
