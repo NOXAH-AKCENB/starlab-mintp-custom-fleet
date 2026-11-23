@@ -15,6 +15,13 @@ Il couvre le cahier des charges « Logiciel de gestion de club de judo ».
    En ligne de commande : `odoo -d <base> -i judo_club --stop-after-init`.
 4. Lancer les tests : `odoo -d <base> -i judo_club --test-tags /judo_club --stop-after-init`.
 
+## Multi-société
+
+Chaque club est une société Odoo. Les données sont cloisonnées par société (règles d'accès `ir.rule`),
+et des contrôles empêchent de relier des éléments de deux clubs différents (adhésion, cours, transaction).
+Pour ajouter un club : **Paramètres → Sociétés → Créer**, puis configurer ses réglages et sa saison
+après l'avoir sélectionné dans le sélecteur de sociétés.
+
 ## Premiers réglages
 
 1. **Paramètres → Société → onglet « Club de judo »** : cotisation mensuelle par défaut,

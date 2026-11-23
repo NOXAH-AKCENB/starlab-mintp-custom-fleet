@@ -21,6 +21,8 @@ class JudoGroup(models.Model):
     _description = 'Groupe d\'entraînement'
     _order = 'name'
 
+    company_id = fields.Many2one(
+        'res.company', string='Société', default=lambda self: self.env.company, required=True)
     name = fields.Char(string='Groupe', required=True)
     description = fields.Text(string='Description')
     age_min = fields.Integer(string='Âge minimum')
@@ -33,14 +35,18 @@ class JudoCourse(models.Model):
     _name = 'judo.course'
     _description = 'Cours'
     _order = 'day_of_week, time_start'
+    _check_company_auto = True
     _sql_constraints = [
         ('time_check', 'CHECK(time_end > time_start)',
          'L\'heure de fin doit être postérieure à l\'heure de début.'),
     ]
 
+    company_id = fields.Many2one(
+        'res.company', string='Société', default=lambda self: self.env.company, required=True)
     name = fields.Char(string='Intitulé', required=True)
-    season_id = fields.Many2one('judo.season', string='Saison', required=True, ondelete='restrict')
-    group_id = fields.Many2one('judo.group', string='Groupe')
+    season_id = fields.Many2one('judo.season', string='Saison', required=True,
+                                ondelete='restrict', check_company=True)
+    group_id = fields.Many2one('judo.group', string='Groupe', check_company=True)
     day_of_week = fields.Selection(DAYS, string='Jour', required=True, default='0')
     time_start = fields.Float(string='Heure de début', required=True,
                               help='Format décimal : 18.5 = 18h30')
@@ -69,10 +75,13 @@ class JudoEnrollment(models.Model):
     _name = 'judo.enrollment'
     _description = 'Inscription à un cours'
     _order = 'date desc, id desc'
+    _check_company_auto = True
 
+    company_id = fields.Many2one(related='course_id.company_id', store=True)
     member_id = fields.Many2one('judo.member', string='Adhérent', required=True,
-                                ondelete='cascade', index=True)
-    course_id = fields.Many2one('judo.course', string='Cours', required=True, ondelete='cascade')
+                                ondelete='cascade', index=True, check_company=True)
+    course_id = fields.Many2one('judo.course', string='Cours', required=True,
+                                ondelete='cascade', check_company=True)
     season_id = fields.Many2one(related='course_id.season_id', store=True, string='Saison')
     date = fields.Date(string='Date d\'inscription', default=fields.Date.context_today, required=True)
     state = fields.Selection([('active', 'Inscrit'), ('cancelled', 'Annulée')],

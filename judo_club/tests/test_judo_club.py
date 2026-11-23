@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import date
 
+from odoo.exceptions import UserError, ValidationError
 from odoo.tests import TransactionCase, tagged
 
 
@@ -125,3 +126,39 @@ class TestJudoClub(TransactionCase):
         self.assertEqual(data['kpis']['members_active'], 1)
         self.assertIn('balance', data['kpis'])
         self.assertIn('amount_due', data['kpis'])
+
+    def test_multicompany_isolation(self):
+        company_b = self.env['res.company'].create({'name': 'Club de judo B'})
+        season_b = self.env['judo.season'].create({
+            'name': '2026-2027 B', 'date_start': date(2026, 9, 1), 'date_end': date(2027, 6, 30),
+            'licence_amount': 12000, 'company_id': company_b.id,
+        })
+        member_b = self.env['judo.member'].create({
+            'first_name': 'Paul', 'last_name': 'Martin', 'company_id': company_b.id,
+        })
+        self.env['judo.membership'].create({
+            'member_id': member_b.id, 'season_id': season_b.id, 'company_id': company_b.id,
+        })
+        # Une adhésion ne peut pas relier un membre d'un club à la saison d'un autre club
+        with self.assertRaises((UserError, ValidationError)):
+            self.env['judo.membership'].create({'member_id': member_b.id, 'season_id': self.season.id})
+
+        user = self.env['res.users'].create({
+            'name': 'Secrétaire multi-clubs', 'login': 'judo_multi_test@example.com',
+            'company_id': self.company.id,
+            'company_ids': [(6, 0, [self.company.id, company_b.id])],
+            'groups_id': [(6, 0, [self.env.ref('judo_club.group_judo_manager').id])],
+        })
+        Member = self.env['judo.member'].with_user(user)
+
+        in_a = Member.with_context(allowed_company_ids=[self.company.id]).search([])
+        self.assertIn(self.member, in_a)
+        self.assertNotIn(member_b, in_a)
+
+        in_b = Member.with_context(allowed_company_ids=[company_b.id]).search([])
+        self.assertIn(member_b, in_b)
+        self.assertNotIn(self.member, in_b)
+
+        data_b = self.env['judo.dashboard'].with_user(user).with_context(
+            allowed_company_ids=[company_b.id]).get_dashboard_data()
+        self.assertEqual(data_b['kpis']['members_total'], 1)

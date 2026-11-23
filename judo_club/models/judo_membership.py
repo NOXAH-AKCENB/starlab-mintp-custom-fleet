@@ -10,15 +10,16 @@ class JudoMembership(models.Model):
     _inherit = ['mail.thread']
     _description = 'Adhésion à une saison'
     _order = 'season_id desc, member_id'
+    _check_company_auto = True
     _sql_constraints = [
         ('member_season_uniq', 'unique(member_id, season_id)',
          'Ce membre est déjà inscrit pour cette saison.'),
     ]
 
     member_id = fields.Many2one('judo.member', string='Adhérent', required=True,
-                                ondelete='cascade', index=True, tracking=True)
+                                ondelete='cascade', index=True, tracking=True, check_company=True)
     season_id = fields.Many2one('judo.season', string='Saison', required=True,
-                                ondelete='restrict', tracking=True)
+                                ondelete='restrict', tracking=True, check_company=True)
     company_id = fields.Many2one(
         'res.company', string='Société', default=lambda self: self.env.company, required=True)
     currency_id = fields.Many2one(related='company_id.currency_id')

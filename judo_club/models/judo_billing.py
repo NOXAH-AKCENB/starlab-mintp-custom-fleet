@@ -13,7 +13,7 @@ class JudoBillableMixin(models.AbstractModel):
         'res.company', string='Société', default=lambda self: self.env.company, required=True)
     currency_id = fields.Many2one(related='company_id.currency_id')
     member_id = fields.Many2one('judo.member', string='Adhérent', required=True,
-                                ondelete='cascade', index=True)
+                                ondelete='cascade', index=True, check_company=True)
     partner_id = fields.Many2one(related='member_id.partner_id', store=True, string='Contact')
     amount = fields.Monetary(string='Montant', required=True, currency_field='currency_id')
     invoice_id = fields.Many2one('account.move', string='Facture', copy=False, readonly=True,
@@ -68,13 +68,14 @@ class JudoFee(models.Model):
     _inherit = ['judo.billable.mixin', 'mail.thread']
     _description = 'Cotisation mensuelle'
     _order = 'period desc, id desc'
+    _check_company_auto = True
     _sql_constraints = [
         ('membership_period_uniq', 'unique(membership_id, period)',
          'Une seule cotisation par mois et par adhésion.'),
     ]
 
     membership_id = fields.Many2one('judo.membership', string='Adhésion', required=True,
-                                    ondelete='cascade', index=True)
+                                    ondelete='cascade', index=True, check_company=True)
     period = fields.Date(string='Mois', required=True, help='Premier jour du mois concerné.')
     name = fields.Char(string='Libellé', compute='_compute_name', store=True)
 
@@ -97,6 +98,8 @@ class JudoFee(models.Model):
             '&', ('state', '=', 'resigned'), ('resignation_date', '>=', period),
         ])
         existing = set(self.search([('period', '=', period)]).membership_id.ids)
+        # Cotisations créées pour la société courante uniquement (voir _cron_generate_monthly_fees)
+        memberships = memberships.filtered(lambda m: m.company_id == self.env.company)
         vals = [{
             'membership_id': m.id,
             'member_id': m.member_id.id,
@@ -108,13 +111,21 @@ class JudoFee(models.Model):
 
     @api.model
     def _cron_generate_monthly_fees(self):
-        self._generate_fees_for_period(fields.Date.context_today(self).replace(day=1))
+        """Exécuté pour chaque société, dans son propre contexte."""
+        period = fields.Date.context_today(self).replace(day=1)
+        for company in self.env['res.company'].sudo().search([]):
+            self.with_company(company)._generate_fees_for_period(period)
 
     @api.model
     def _cron_send_reminders(self):
         today = fields.Date.context_today(self)
-        overdue = self.search([('state', '=', 'invoiced'), ('invoice_date_due', '<', today)])
-        overdue._judo_send_reminders('judo_club.mail_template_judo_fee_reminder')
+        for company in self.env['res.company'].sudo().search([]):
+            overdue = self.with_company(company).search([
+                ('company_id', '=', company.id),
+                ('state', '=', 'invoiced'),
+                ('invoice_date_due', '<', today),
+            ])
+            overdue._judo_send_reminders('judo_club.mail_template_judo_fee_reminder')
 
 
 class JudoLicence(models.Model):
@@ -122,6 +133,7 @@ class JudoLicence(models.Model):
     _inherit = ['judo.billable.mixin', 'mail.thread']
     _description = 'Licence fédérale'
     _order = 'season_id desc, member_id'
+    _check_company_auto = True
     _sql_constraints = [
         ('member_season_uniq', 'unique(member_id, season_id)',
          'Une licence existe déjà pour ce membre et cette saison.'),
@@ -129,7 +141,8 @@ class JudoLicence(models.Model):
 
     membership_id = fields.Many2one('judo.membership', string='Adhésion',
                                     ondelete='cascade')
-    season_id = fields.Many2one('judo.season', string='Saison', required=True, ondelete='restrict')
+    season_id = fields.Many2one('judo.season', string='Saison', required=True,
+                                ondelete='restrict', check_company=True)
     name = fields.Char(string='Libellé', compute='_compute_name', store=True)
 
     @api.depends('member_id.name', 'season_id.name')
@@ -139,5 +152,9 @@ class JudoLicence(models.Model):
 
     @api.model
     def _cron_send_reminders(self):
-        pending = self.search([('state', '=', 'to_invoice')])
-        pending._judo_send_reminders('judo_club.mail_template_judo_licence_reminder')
+        for company in self.env['res.company'].sudo().search([]):
+            pending = self.with_company(company).search([
+                ('company_id', '=', company.id),
+                ('state', '=', 'to_invoice'),
+            ])
+            pending._judo_send_reminders('judo_club.mail_template_judo_licence_reminder')

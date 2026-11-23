@@ -1,6 +1,6 @@
 # Guide utilisateur – Club de judo
 
-> **Version du guide : 0.2** · Module `judo_club` 17.0.1.0.0 · Dernière mise à jour : voir [CHANGELOG](../CHANGELOG.md)
+> **Version du guide : 0.3** · Module `judo_club` 17.0.1.0.0 · Dernière mise à jour : voir [CHANGELOG](../CHANGELOG.md)
 >
 > Ce guide évolue avec le logiciel. Chaque fonctionnalité porte un statut :
 > ✅ disponible · 🚧 en cours · 📝 prévue.
@@ -23,7 +23,8 @@
 10. [Rappels automatiques](#10-rappels-automatiques)
 11. [Comptabilité : comptes et transactions](#11-comptabilité--comptes-et-transactions)
 12. [Situation financière et relevé PDF](#12-situation-financière-et-relevé-pdf)
-13. [Questions fréquentes](#13-questions-fréquentes)
+13. [Plusieurs clubs dans la même base (multi-société)](#13-plusieurs-clubs-dans-la-même-base-multi-société)
+14. [Questions fréquentes](#14-questions-fréquentes)
 
 ---
 
@@ -187,7 +188,18 @@ Pour un relevé **mensuel** : période du 1er au dernier jour du mois. Pour un r
 
 > La situation financière est un outil de pilotage. Pour les états légaux (bilan et compte de résultat officiels), utilisez la comptabilité Odoo.
 
-## 13. Questions fréquentes
+## 13. Plusieurs clubs dans la même base (multi-société)
+
+✅ **Disponible** — chaque club est une **société** Odoo distincte.
+
+- En haut à droite, le **sélecteur de sociétés** indique le ou les clubs actifs. Cochez le club dans lequel vous travaillez.
+- Adhérents, saisons, cours, cotisations, licences, comptes et transactions appartiennent à un club. **Un club ne voit jamais les données d'un autre**, même dans la même base.
+- Pour saisir un adhérent pour le club B, sélectionnez d'abord le club B dans le sélecteur. Les nouvelles fiches sont créées dans la société active.
+- Un utilisateur peut être rattaché à plusieurs clubs : il sélectionne alors ceux qu'il veut voir.
+- Les paramètres (cotisation mensuelle, mentions de facture, coordonnées bancaires) se règlent **séparément pour chaque club** : Paramètres → Sociétés → onglet « Club de judo ».
+- Les cotisations et les rappels sont générés club par club ; un club sans saison ne génère rien.
+
+## 14. Questions fréquentes
 
 **Un adhérent a payé mais la cotisation reste « Facturée ».**
 Le paiement n'a pas encore été rapproché dans la comptabilité Odoo. Une fois rapproché, la cotisation passe à « Payée ».

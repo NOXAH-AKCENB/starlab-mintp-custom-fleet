@@ -28,4 +28,79 @@
         <field name="users" eval="[(4, ref('base.user_admin'))]"/>
         <field name="comment">Accès complet, y compris la configuration et la suppression des données.</field>
     </record>
+
+    <!-- Multi-société : chaque club ne voit que ses propres données.
+         Un utilisateur ne voit que les sociétés sélectionnées dans le sélecteur. -->
+    <record id="rule_judo_season_company" model="ir.rule">
+        <field name="name">Saisons : société</field>
+        <field name="model_id" ref="model_judo_season"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="rule_judo_member_category_company" model="ir.rule">
+        <field name="name">Catégories d'adhérents : société</field>
+        <field name="model_id" ref="model_judo_member_category"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="rule_judo_member_company" model="ir.rule">
+        <field name="name">Adhérents : société</field>
+        <field name="model_id" ref="model_judo_member"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="rule_judo_membership_company" model="ir.rule">
+        <field name="name">Adhésions : société</field>
+        <field name="model_id" ref="model_judo_membership"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="rule_judo_group_company" model="ir.rule">
+        <field name="name">Groupes : société</field>
+        <field name="model_id" ref="model_judo_group"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="rule_judo_course_company" model="ir.rule">
+        <field name="name">Cours : société</field>
+        <field name="model_id" ref="model_judo_course"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="rule_judo_enrollment_company" model="ir.rule">
+        <field name="name">Inscriptions : société</field>
+        <field name="model_id" ref="model_judo_enrollment"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="rule_judo_fee_company" model="ir.rule">
+        <field name="name">Cotisations : société</field>
+        <field name="model_id" ref="model_judo_fee"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="rule_judo_licence_company" model="ir.rule">
+        <field name="name">Licences : société</field>
+        <field name="model_id" ref="model_judo_licence"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="rule_judo_bank_account_company" model="ir.rule">
+        <field name="name">Comptes et caisses : société</field>
+        <field name="model_id" ref="model_judo_bank_account"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="rule_judo_transaction_category_company" model="ir.rule">
+        <field name="name">Catégories de transactions : société</field>
+        <field name="model_id" ref="model_judo_transaction_category"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="rule_judo_transaction_company" model="ir.rule">
+        <field name="name">Transactions : société</field>
+        <field name="model_id" ref="model_judo_transaction"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
 </odoo>

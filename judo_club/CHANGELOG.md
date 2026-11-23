@@ -23,6 +23,14 @@ Chaque modification du module est notée ici et répercutée dans le guide utili
 - **Relevé financier en PDF** depuis la situation financière (détail mensuel et liste des transactions).
 - **Tableau de bord** en composant OWL : indicateurs, graphique 12 mois, dernières transactions.
 
+### Multi-société
+- Chaque club est une société Odoo ; toutes les données (adhérents, saisons, adhésions, cours, cotisations, licences, comptes, transactions, catégories) portent une société.
+- Règles d'accès par société : un utilisateur ne voit que les clubs qu'il a sélectionnés dans le sélecteur de sociétés.
+- Contrôle de cohérence entre sociétés : impossible de relier un adhérent d'un club à la saison ou au cours d'un autre.
+- Cron (cotisations, rappels) exécuté club par club, dans le contexte de chaque société.
+- Tableau de bord limité à la société courante.
+- Test d'isolation entre deux clubs.
+
 ### Limites connues
 - Pas encore de captures d'écran dans le guide (à faire sur une instance installée).
 - Les paiements Odoo ne sont pas recopiés automatiquement dans les transactions du club.

@@ -19,6 +19,8 @@ class JudoMemberCategory(models.Model):
     _description = 'Catégorie d\'adhérents'
     _order = 'name'
 
+    company_id = fields.Many2one(
+        'res.company', string='Société', default=lambda self: self.env.company, required=True)
     name = fields.Char(string='Catégorie', required=True,
                        help='Ex : Enfants, Adultes, Compétiteurs')
     color = fields.Integer(string='Couleur')
