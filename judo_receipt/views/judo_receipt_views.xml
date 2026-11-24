@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_judo_receipt_tree" model="ir.ui.view">
+        <field name="name">judo.receipt.tree</field>
+        <field name="model">judo.receipt</field>
+        <field name="arch" type="xml">
+            <tree string="Reçus">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="member_id"/>
+                <field name="payer_name" optional="show"/>
+                <field name="payment_method"/>
+                <field name="amount_total" sum="Total"/>
+                <field name="printed_date" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_judo_receipt_form" model="ir.ui.view">
+        <field name="name">judo.receipt.form</field>
+        <field name="model">judo.receipt</field>
+        <field name="arch" type="xml">
+            <form string="Reçu">
+                <header>
+                    <button name="action_print" type="object" string="Imprimer le ticket"
+                            class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id"/>
+                            <field name="date"/>
+                            <field name="member_id"/>
+                            <field name="payer_name"/>
+                            <field name="payment_method"/>
+                        </group>
+                        <group>
+                            <field name="amount_total"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="transaction_id"/>
+                            <field name="printed_date"/>
+                        </group>
+                    </group>
+                    <field name="line_ids">
+                        <tree editable="bottom">
+                            <field name="label"/>
+                            <field name="quantity"/>
+                            <field name="unit_price"/>
+                            <field name="subtotal" sum="Total"/>
+                            <field name="currency_id" invisible="1"/>
+                        </tree>
+                    </field>
+                    <field name="note" placeholder="Notes…"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_judo_receipt_search" model="ir.ui.view">
+        <field name="name">judo.receipt.search</field>
+        <field name="model">judo.receipt</field>
+        <field name="arch" type="xml">
+            <search string="Reçus">
+                <field name="name"/>
+                <field name="member_id"/>
+                <field name="payer_name"/>
+                <filter name="not_printed" string="Non imprimés" domain="[('printed_date', '=', False)]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter name="group_method" string="Mode de paiement" context="{'group_by': 'payment_method'}"/>
+                    <filter name="group_date" string="Date" context="{'group_by': 'date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_judo_receipt" model="ir.actions.act_window">
+        <field name="name">Reçus et tickets</field>
+        <field name="res_model">judo.receipt</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_judo_receipt_search"/>
+    </record>
+
+    <menuitem id="menu_judo_receipts" name="Reçus et tickets" parent="judo_club.menu_judo_accounting"
+              action="action_judo_receipt" sequence="50"/>
+
+    <!-- Création d'un reçu depuis une liste de cotisations ou de licences (Action → …) -->
+    <record id="action_judo_fee_create_receipts" model="ir.actions.server">
+        <field name="name">Créer le reçu (ticket)</field>
+        <field name="model_id" ref="judo_club.model_judo_fee"/>
+        <field name="binding_model_id" ref="judo_club.model_judo_fee"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_create_receipts()</field>
+    </record>
+
+    <record id="action_judo_licence_create_receipts" model="ir.actions.server">
+        <field name="name">Créer le reçu (ticket)</field>
+        <field name="model_id" ref="judo_club.model_judo_licence"/>
+        <field name="binding_model_id" ref="judo_club.model_judo_licence"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_create_receipts()</field>
+    </record>
+</odoo>

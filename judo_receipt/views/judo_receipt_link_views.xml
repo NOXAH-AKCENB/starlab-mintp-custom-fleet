@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Bouton « Créer le reçu » sur la fiche d'une recette -->
+    <record id="view_judo_transaction_form_receipt" model="ir.ui.view">
+        <field name="name">judo.transaction.form.receipt</field>
+        <field name="model">judo.transaction</field>
+        <field name="inherit_id" ref="judo_club.view_judo_transaction_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_create_receipt" type="object" string="Créer le reçu (ticket)"
+                            class="btn-primary" invisible="type not in ('income', 'refund_in')"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,6 +1,6 @@
 # Guide utilisateur – Club de judo
 
-> **Version du guide : 0.3** · Module `judo_club` 17.0.1.0.0 · Dernière mise à jour : voir [CHANGELOG](../CHANGELOG.md)
+> **Version du guide : 0.4** · Module `judo_club` 17.0.1.0.0 · Dernière mise à jour : voir [CHANGELOG](../CHANGELOG.md)
 >
 > Ce guide évolue avec le logiciel. Chaque fonctionnalité porte un statut :
 > ✅ disponible · 🚧 en cours · 📝 prévue.
@@ -24,7 +24,8 @@
 11. [Comptabilité : comptes et transactions](#11-comptabilité--comptes-et-transactions)
 12. [Situation financière et relevé PDF](#12-situation-financière-et-relevé-pdf)
 13. [Plusieurs clubs dans la même base (multi-société)](#13-plusieurs-clubs-dans-la-même-base-multi-société)
-14. [Questions fréquentes](#14-questions-fréquentes)
+14. [Reçus et tickets de caisse](#14-reçus-et-tickets-de-caisse) *(module judo_receipt)*
+15. [Questions fréquentes](#15-questions-fréquentes)
 
 ---
 
@@ -199,7 +200,19 @@ Pour un relevé **mensuel** : période du 1er au dernier jour du mois. Pour un r
 - Les paramètres (cotisation mensuelle, mentions de facture, coordonnées bancaires) se règlent **séparément pour chaque club** : Paramètres → Sociétés → onglet « Club de judo ».
 - Les cotisations et les rappels sont générés club par club ; un club sans saison ne génère rien.
 
-## 14. Questions fréquentes
+## 14. Reçus et tickets de caisse
+
+✅ **Disponible** — module complémentaire `judo_receipt`.
+
+- **Créer un reçu depuis une recette** : ouvrir la transaction (recette) → *Créer le reçu (ticket)*.
+- **Créer un reçu pour des cotisations ou licences** : dans la liste, cochez les lignes d'un même adhérent → *Action → Créer le reçu (ticket)*. Un seul reçu est créé, avec une ligne par élément.
+- **Imprimer** : ouvrir le reçu → *Imprimer le ticket*. Le format est le ticket de caisse 80 mm, à envoyer sur l'imprimante thermique.
+- Chaque club numérote ses reçus séparément (REC/2026/00001…).
+- Retrouver les reçus : Comptabilité → Reçus et tickets.
+
+📸 *Capture : ticket de caisse imprimé (à ajouter).*
+
+## 15. Questions fréquentes
 
 **Un adhérent a payé mais la cotisation reste « Facturée ».**
 Le paiement n'a pas encore été rapproché dans la comptabilité Odoo. Une fois rapproché, la cotisation passe à « Payée ».

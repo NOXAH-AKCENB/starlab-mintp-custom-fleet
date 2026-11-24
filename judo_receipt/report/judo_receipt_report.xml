@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Format rouleau thermique 80 mm -->
+    <record id="paperformat_judo_ticket" model="report.paperformat">
+        <field name="name">Ticket de caisse 80 mm</field>
+        <field name="default" eval="False"/>
+        <field name="format">custom</field>
+        <field name="page_width">80</field>
+        <field name="page_height">250</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">3</field>
+        <field name="margin_bottom">3</field>
+        <field name="margin_left">3</field>
+        <field name="margin_right">3</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">96</field>
+    </record>
+
+    <record id="action_report_judo_receipt" model="ir.actions.report">
+        <field name="name">Ticket de caisse</field>
+        <field name="model">judo.receipt</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">judo_receipt.report_judo_receipt_ticket</field>
+        <field name="report_file">judo_receipt.report_judo_receipt_ticket</field>
+        <field name="paperformat_id" ref="paperformat_judo_ticket"/>
+        <field name="print_report_name">'Ticket_%s' % (object.name or '').replace('/', '-')</field>
+    </record>
+
+    <template id="report_judo_receipt_ticket">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="company" t-value="o.company_id"/>
+                <div style="font-family: 'Courier New', monospace; font-size: 11px; color: #000;">
+                    <div style="text-align: center;">
+                        <div style="font-weight: bold; font-size: 14px;" t-out="company.name"/>
+                        <div t-if="company.street" t-out="company.street"/>
+                        <div t-if="company.street2" t-out="company.street2"/>
+                        <div t-if="company.phone">Tél : <span t-out="company.phone"/></div>
+                    </div>
+                    <hr style="border-top: 1px dashed #000;"/>
+                    <div style="text-align: center; font-weight: bold;">REÇU DE PAIEMENT</div>
+                    <div>N° : <span t-out="o.name"/></div>
+                    <div>Date : <span t-out="o.date"/></div>
+                    <div>Payé par : <span t-out="o.member_id.name or o.payer_name or '-'"/></div>
+                    <hr style="border-top: 1px dashed #000;"/>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left;">Désignation</th>
+                                <th style="text-align: right;">Qté</th>
+                                <th style="text-align: right;">Montant</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="o.line_ids" t-as="l">
+                                <tr>
+                                    <td t-out="l.label"/>
+                                    <td style="text-align: right;" t-out="l.quantity"/>
+                                    <td style="text-align: right;"
+                                        t-out="l.subtotal"
+                                        t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <hr style="border-top: 1px dashed #000;"/>
+                    <div style="font-weight: bold; font-size: 13px; text-align: right;">
+                        TOTAL :
+                        <span t-out="o.amount_total"
+                              t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                    </div>
+                    <div>Mode de paiement : <span t-out="o.payment_method_label"/></div>
+                    <hr style="border-top: 1px dashed #000;"/>
+                    <div style="text-align: center;">Merci de votre confiance !</div>
+                    <div style="text-align: center;">Ce reçu fait foi de paiement.</div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_judo_receipt_user,judo.receipt user,model_judo_receipt,judo_club.group_judo_user,1,1,1,0
+access_judo_receipt_manager,judo.receipt manager,model_judo_receipt,judo_club.group_judo_manager,1,1,1,1
+access_judo_receipt_line_user,judo.receipt.line user,model_judo_receipt_line,judo_club.group_judo_user,1,1,1,0
+access_judo_receipt_line_manager,judo.receipt.line manager,model_judo_receipt_line,judo_club.group_judo_manager,1,1,1,1
