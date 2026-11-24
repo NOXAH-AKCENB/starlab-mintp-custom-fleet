@@ -62,7 +62,7 @@ Les menus absents de votre compte correspondent à un rôle que vous n'avez pas.
 
 **Exporter une période** : choisissez les dates *Du* et *Au* en haut de l'écran, puis cliquez sur :
 - **PDF** : relevé complet (compte de résultat, trésorerie, détail mensuel, liste des transactions) ;
-- **Excel** : fichier à trois onglets, *Synthèse*, *Mensuel* et *Transactions* ;
+- **Excel** : fichier à quatre onglets, *Synthèse*, *Indicateurs* (adhérents, montant non réglé, à facturer, retards, solde des comptes, à la date de l'export), *Mensuel* et *Transactions* ;
 - **Ticket de caisse** : situation résumée au format 80 mm, à envoyer sur l'imprimante thermique.
 
 ![Schéma du tableau de bord](images/tableau_de_bord.svg)

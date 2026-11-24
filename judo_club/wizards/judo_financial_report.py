@@ -156,6 +156,24 @@ class JudoFinancialReport(models.TransientModel):
             else:
                 ws.write(row, 1, str(value))
 
+        # Indicateurs du tableau de bord, à la date de l'export
+        kpis = self.env['judo.dashboard'].get_dashboard_data()['kpis']
+        ws_k = wb.add_worksheet(_('Indicateurs'))
+        ws_k.set_column(0, 0, 34)
+        ws_k.set_column(1, 1, 22)
+        ws_k.write(0, 0, _('Indicateurs au %s', fields.Date.context_today(self)), bold)
+        indicators = [
+            (_('Adhérents actifs'), kpis['members_active']),
+            (_('Adhérents (total des fiches)'), kpis['members_total']),
+            (_('Montant non réglé (cotisations et licences)'), kpis['amount_due']),
+            (_('Éléments à facturer'), kpis['to_invoice']),
+            (_('Cotisations en retard'), kpis['overdue']),
+            (_('Solde des comptes et caisses'), kpis['balance']),
+        ]
+        for row, (label, value) in enumerate(indicators, start=2):
+            ws_k.write(row, 0, label, bold)
+            ws_k.write_number(row, 1, float(value), money)
+
         ws_m = wb.add_worksheet(_('Mensuel'))
         ws_m.set_column(0, 3, 16)
         for col, title in enumerate([_('Mois'), _('Recettes'), _('Dépenses'), _('Flux net')]):

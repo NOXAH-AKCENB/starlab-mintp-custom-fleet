@@ -8,6 +8,7 @@ Chaque modification du module est notée ici et répercutée dans le guide utili
 - Tableau de bord : choix d'une période, puis export **PDF** (relevé), **Excel** (3 onglets : synthèse, mensuel, transactions) ou **ticket de caisse 80 mm** (situation résumée).
 - Assistant « Situation financière » : boutons d'impression ticket et d'export Excel.
 - Dépendance Python déclarée : `xlsxwriter`.
+- Export Excel : onglet *Indicateurs* (adhérents, montant non réglé, à facturer, retards, solde des comptes) à la date de l'export.
 
 ## [17.0.1.0.0] – 2026-11-23
 
