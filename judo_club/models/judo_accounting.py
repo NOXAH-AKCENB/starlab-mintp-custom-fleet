@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models
+from .judo_common import check_same_company
 
 TX_TYPES = [
     ('income', 'Recette'),
@@ -49,7 +50,6 @@ class JudoTransaction(models.Model):
     _name = 'judo.transaction'
     _description = 'Transaction (recette, dépense, remboursement)'
     _order = 'date desc, id desc'
-    _check_company_auto = True
     _sql_constraints = [
         ('amount_positive', 'CHECK(amount > 0)',
          'Le montant doit être positif : le sens est donné par la catégorie.'),
@@ -58,9 +58,8 @@ class JudoTransaction(models.Model):
     name = fields.Char(string='Libellé', required=True)
     date = fields.Date(string='Date', required=True, default=fields.Date.context_today, index=True)
     bank_account_id = fields.Many2one('judo.bank.account', string='Compte', required=True,
-                                      ondelete='restrict', check_company=True)
-    category_id = fields.Many2one('judo.transaction.category', string='Catégorie', required=True,
-                                  check_company=True)
+                                      ondelete='restrict')
+    category_id = fields.Many2one('judo.transaction.category', string='Catégorie', required=True)
     type = fields.Selection(related='category_id.type', store=True, string='Sens')
     company_id = fields.Many2one(related='bank_account_id.company_id', store=True)
     currency_id = fields.Many2one(related='company_id.currency_id')
@@ -68,10 +67,14 @@ class JudoTransaction(models.Model):
     signed_amount = fields.Monetary(string='Montant signé', compute='_compute_signed_amount',
                                     store=True, currency_field='currency_id',
                                     help='Positif pour les entrées, négatif pour les sorties.')
-    member_id = fields.Many2one('judo.member', string='Adhérent', check_company=True)
+    member_id = fields.Many2one('judo.member', string='Adhérent')
     partner_id = fields.Many2one('res.partner', string='Tiers')
     reference = fields.Char(string='Référence', help='N° de chèque, de virement, de reçu…')
     note = fields.Text(string='Notes')
+
+    @api.constrains('company_id', 'category_id', 'member_id')
+    def _check_company_consistency(self):
+        check_same_company(self, ('category_id', 'member_id'))
 
     @api.depends('amount', 'type')
     def _compute_signed_amount(self):

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import _, api, fields, models
+from .judo_common import check_same_company
 from odoo.exceptions import UserError
 
 
@@ -10,16 +11,15 @@ class JudoMembership(models.Model):
     _inherit = ['mail.thread']
     _description = 'Adhésion à une saison'
     _order = 'season_id desc, member_id'
-    _check_company_auto = True
     _sql_constraints = [
         ('member_season_uniq', 'unique(member_id, season_id)',
          'Ce membre est déjà inscrit pour cette saison.'),
     ]
 
     member_id = fields.Many2one('judo.member', string='Adhérent', required=True,
-                                ondelete='cascade', index=True, tracking=True, check_company=True)
+                                ondelete='cascade', index=True, tracking=True)
     season_id = fields.Many2one('judo.season', string='Saison', required=True,
-                                ondelete='restrict', tracking=True, check_company=True)
+                                ondelete='restrict', tracking=True)
     company_id = fields.Many2one(
         'res.company', string='Société', default=lambda self: self.env.company, required=True)
     currency_id = fields.Many2one(related='company_id.currency_id')
@@ -55,6 +55,10 @@ class JudoMembership(models.Model):
                     'company_id': m.company_id.id,
                 })
         return memberships
+
+    @api.constrains('company_id', 'member_id', 'season_id')
+    def _check_company_consistency(self):
+        check_same_company(self, ('member_id', 'season_id'))
 
     def action_resign(self):
         """Désistement : l'adhésion n'est plus facturée pour les mois suivants."""

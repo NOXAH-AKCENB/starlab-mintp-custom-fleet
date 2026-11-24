@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import _, api, fields, models
+from .judo_common import check_same_company
 from odoo.exceptions import ValidationError
 
 from .judo_member import GRADES
@@ -35,7 +36,6 @@ class JudoCourse(models.Model):
     _name = 'judo.course'
     _description = 'Cours'
     _order = 'day_of_week, time_start'
-    _check_company_auto = True
     _sql_constraints = [
         ('time_check', 'CHECK(time_end > time_start)',
          'L\'heure de fin doit être postérieure à l\'heure de début.'),
@@ -45,8 +45,8 @@ class JudoCourse(models.Model):
         'res.company', string='Société', default=lambda self: self.env.company, required=True)
     name = fields.Char(string='Intitulé', required=True)
     season_id = fields.Many2one('judo.season', string='Saison', required=True,
-                                ondelete='restrict', check_company=True)
-    group_id = fields.Many2one('judo.group', string='Groupe', check_company=True)
+                                ondelete='restrict')
+    group_id = fields.Many2one('judo.group', string='Groupe')
     day_of_week = fields.Selection(DAYS, string='Jour', required=True, default='0')
     time_start = fields.Float(string='Heure de début', required=True,
                               help='Format décimal : 18.5 = 18h30')
@@ -57,6 +57,10 @@ class JudoCourse(models.Model):
     capacity = fields.Integer(string='Places maximum', default=0, help='0 = nombre de places illimité')
     enrollment_ids = fields.One2many('judo.enrollment', 'course_id', string='Inscrits')
     enrolled_count = fields.Integer(string='Inscrits', compute='_compute_enrolled_count')
+
+    @api.constrains('company_id', 'season_id', 'group_id')
+    def _check_company_consistency(self):
+        check_same_company(self, ('season_id', 'group_id'))
 
     @api.depends('day_of_week', 'time_start', 'time_end')
     def _compute_schedule(self):
@@ -75,17 +79,20 @@ class JudoEnrollment(models.Model):
     _name = 'judo.enrollment'
     _description = 'Inscription à un cours'
     _order = 'date desc, id desc'
-    _check_company_auto = True
 
     company_id = fields.Many2one(related='course_id.company_id', store=True)
     member_id = fields.Many2one('judo.member', string='Adhérent', required=True,
-                                ondelete='cascade', index=True, check_company=True)
+                                ondelete='cascade', index=True)
     course_id = fields.Many2one('judo.course', string='Cours', required=True,
-                                ondelete='cascade', check_company=True)
+                                ondelete='cascade')
     season_id = fields.Many2one(related='course_id.season_id', store=True, string='Saison')
     date = fields.Date(string='Date d\'inscription', default=fields.Date.context_today, required=True)
     state = fields.Selection([('active', 'Inscrit'), ('cancelled', 'Annulée')],
                              string='Statut', default='active', required=True)
+
+    @api.constrains('company_id', 'member_id', 'course_id')
+    def _check_company_consistency(self):
+        check_same_company(self, ('member_id', 'course_id'))
 
     @api.constrains('member_id', 'course_id', 'state')
     def _check_enrollment(self):

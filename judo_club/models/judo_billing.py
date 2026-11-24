@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import _, api, fields, models
+from .judo_common import check_same_company
 from odoo.exceptions import UserError
 
 
@@ -13,7 +14,7 @@ class JudoBillableMixin(models.AbstractModel):
         'res.company', string='Société', default=lambda self: self.env.company, required=True)
     currency_id = fields.Many2one(related='company_id.currency_id')
     member_id = fields.Many2one('judo.member', string='Adhérent', required=True,
-                                ondelete='cascade', index=True, check_company=True)
+                                ondelete='cascade', index=True)
     partner_id = fields.Many2one(related='member_id.partner_id', store=True, string='Contact')
     amount = fields.Monetary(string='Montant', required=True, currency_field='currency_id')
     invoice_id = fields.Many2one('account.move', string='Facture', copy=False, readonly=True,
@@ -68,14 +69,13 @@ class JudoFee(models.Model):
     _inherit = ['judo.billable.mixin', 'mail.thread']
     _description = 'Cotisation mensuelle'
     _order = 'period desc, id desc'
-    _check_company_auto = True
     _sql_constraints = [
         ('membership_period_uniq', 'unique(membership_id, period)',
          'Une seule cotisation par mois et par adhésion.'),
     ]
 
     membership_id = fields.Many2one('judo.membership', string='Adhésion', required=True,
-                                    ondelete='cascade', index=True, check_company=True)
+                                    ondelete='cascade', index=True)
     period = fields.Date(string='Mois', required=True, help='Premier jour du mois concerné.')
     name = fields.Char(string='Libellé', compute='_compute_name', store=True)
 
@@ -84,6 +84,10 @@ class JudoFee(models.Model):
         for rec in self:
             month = rec.period.strftime('%m/%Y') if rec.period else ''
             rec.name = _('Cotisation %s – %s', month, rec.member_id.name or '')
+
+    @api.constrains('company_id', 'member_id', 'membership_id')
+    def _check_company_consistency(self):
+        check_same_company(self, ('member_id', 'membership_id'))
 
     @api.model
     def _generate_fees_for_period(self, period):
@@ -133,7 +137,6 @@ class JudoLicence(models.Model):
     _inherit = ['judo.billable.mixin', 'mail.thread']
     _description = 'Licence fédérale'
     _order = 'season_id desc, member_id'
-    _check_company_auto = True
     _sql_constraints = [
         ('member_season_uniq', 'unique(member_id, season_id)',
          'Une licence existe déjà pour ce membre et cette saison.'),
@@ -142,8 +145,12 @@ class JudoLicence(models.Model):
     membership_id = fields.Many2one('judo.membership', string='Adhésion',
                                     ondelete='cascade')
     season_id = fields.Many2one('judo.season', string='Saison', required=True,
-                                ondelete='restrict', check_company=True)
+                                ondelete='restrict')
     name = fields.Char(string='Libellé', compute='_compute_name', store=True)
+
+    @api.constrains('company_id', 'member_id', 'season_id')
+    def _check_company_consistency(self):
+        check_same_company(self, ('member_id', 'season_id'))
 
     @api.depends('member_id.name', 'season_id.name')
     def _compute_name(self):
