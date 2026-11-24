@@ -213,6 +213,10 @@
                 <footer>
                     <button name="action_print_pdf" type="object" string="Imprimer le relevé (PDF)"
                             class="btn-primary"/>
+                    <button name="action_print_ticket" type="object" string="Ticket de caisse"
+                            class="btn-secondary"/>
+                    <button name="action_export_xlsx" type="object" string="Exporter en Excel"
+                            class="btn-secondary"/>
                     <button name="action_open_transactions" type="object" string="Voir les transactions"
                             class="btn-secondary"/>
                     <button string="Fermer" class="btn-secondary" special="cancel"/>
