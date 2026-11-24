@@ -1,6 +1,6 @@
 # Guide utilisateur – Club de judo
 
-> **Version du guide : 0.5** · Module `judo_club` 17.0.1.0.0 · Dernière mise à jour : voir [CHANGELOG](../CHANGELOG.md)
+> **Version du guide : 0.5** · Module `judo_club` 17.0.1.1.0 · Dernière mise à jour : voir [CHANGELOG](../CHANGELOG.md)
 >
 > Ce guide évolue avec le logiciel. Chaque fonctionnalité porte un statut :
 > ✅ disponible · 🚧 en cours · 📝 prévue.
