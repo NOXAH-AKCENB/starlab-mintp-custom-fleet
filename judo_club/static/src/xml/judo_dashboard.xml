@@ -5,7 +5,19 @@
             <div t-if="state.loading" class="judo-loading">Chargement du tableau de bord…</div>
 
             <t t-else="">
-                <h2 class="judo-title">Tableau de bord du club</h2>
+                <div class="judo-header">
+                    <h2 class="judo-title">Tableau de bord du club</h2>
+                    <div class="judo-toolbar">
+                        <label class="judo-period">Du <input type="date" t-model="state.period.from"/></label>
+                        <label class="judo-period">Au <input type="date" t-model="state.period.to"/></label>
+                        <button class="btn btn-sm btn-secondary" t-att-disabled="state.exporting"
+                                t-on-click="() => exportAs('pdf')">PDF</button>
+                        <button class="btn btn-sm btn-secondary" t-att-disabled="state.exporting"
+                                t-on-click="() => exportAs('xlsx')">Excel</button>
+                        <button class="btn btn-sm btn-primary" t-att-disabled="state.exporting"
+                                t-on-click="() => exportAs('ticket')">Ticket de caisse</button>
+                    </div>
+                </div>
 
                 <!-- Indicateurs -->
                 <div class="judo-kpis">

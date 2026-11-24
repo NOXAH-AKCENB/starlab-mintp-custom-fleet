@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
+import base64
+import io
+from datetime import datetime
+
 from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 
 class JudoFinancialReport(models.TransientModel):
@@ -111,6 +116,92 @@ class JudoFinancialReport(models.TransientModel):
     def action_print_pdf(self):
         self.ensure_one()
         return self.env.ref('judo_club.action_report_financial_statement').report_action(self)
+
+    def action_export_xlsx(self):
+        """Exporte la situation de la période en Excel (3 onglets) et renvoie le téléchargement."""
+        self.ensure_one()
+        try:
+            import xlsxwriter
+        except ImportError as exc:  # pragma: no cover - dépend de l'installation serveur
+            raise UserError(_("La bibliothèque Python xlsxwriter est requise pour l'export Excel.")) from exc
+
+        output = io.BytesIO()
+        wb = xlsxwriter.Workbook(output, {'in_memory': True})
+        bold = wb.add_format({'bold': True})
+        head = wb.add_format({'bold': True, 'bg_color': '#714B67', 'font_color': '#FFFFFF'})
+        money = wb.add_format({'num_format': '#,##0'})
+        date_fmt = wb.add_format({'num_format': 'dd/mm/yyyy'})
+
+        ws = wb.add_worksheet(_('Synthèse'))
+        ws.set_column(0, 0, 34)
+        ws.set_column(1, 1, 24)
+        summary = [
+            (_('Période'), '%s au %s' % (self.date_from, self.date_to)),
+            (_('Compte'), self.bank_account_id.name or _('Tous les comptes et caisses')),
+            (_('Solde d\'ouverture'), self.opening_balance),
+            (_('Total des recettes'), self.total_income),
+            (_('Total des dépenses'), self.total_expense),
+            (_('Résultat de la période'), self.result),
+            (_('Entrées de trésorerie'), self.cash_in),
+            (_('Sorties de trésorerie'), self.cash_out),
+            (_('Solde de clôture'), self.closing_balance),
+            (_('Remboursements reçus'), self.refunds_in),
+            (_('Remboursements versés'), self.refunds_out),
+            (_('Factures clients à encaisser'), self.receivables),
+        ]
+        for row, (label, value) in enumerate(summary):
+            ws.write(row, 0, label, bold)
+            if isinstance(value, (int, float)):
+                ws.write_number(row, 1, float(value), money)
+            else:
+                ws.write(row, 1, str(value))
+
+        ws_m = wb.add_worksheet(_('Mensuel'))
+        ws_m.set_column(0, 3, 16)
+        for col, title in enumerate([_('Mois'), _('Recettes'), _('Dépenses'), _('Flux net')]):
+            ws_m.write(0, col, title, head)
+        for row, line in enumerate(self._monthly_breakdown(), start=1):
+            ws_m.write(row, 0, line['label'])
+            ws_m.write_number(row, 1, float(line['income']), money)
+            ws_m.write_number(row, 2, float(line['expense']), money)
+            ws_m.write_number(row, 3, float(line['net']), money)
+
+        ws_t = wb.add_worksheet(_('Transactions'))
+        ws_t.set_column(0, 0, 12)
+        ws_t.set_column(1, 3, 28)
+        ws_t.set_column(4, 6, 18)
+        headers = [_('Date'), _('Libellé'), _('Catégorie'), _('Compte'), _('Sens'),
+                   _('Référence'), _('Montant signé')]
+        for col, title in enumerate(headers):
+            ws_t.write(0, col, title, head)
+        for row, tx in enumerate(self._get_transactions(), start=1):
+            ws_t.write_datetime(row, 0, datetime.combine(tx.date, datetime.min.time()), date_fmt)
+            ws_t.write(row, 1, tx.name or '')
+            ws_t.write(row, 2, tx.category_id.name or '')
+            ws_t.write(row, 3, tx.bank_account_id.name or '')
+            ws_t.write(row, 4, dict(tx._fields['type'].selection).get(tx.type, ''))
+            ws_t.write(row, 5, tx.reference or '')
+            ws_t.write_number(row, 6, float(tx.signed_amount), money)
+        wb.close()
+
+        filename = 'Situation_%s_%s.xlsx' % (self.date_from, self.date_to)
+        attachment = self.env['ir.attachment'].create({
+            'name': filename,
+            'type': 'binary',
+            'datas': base64.b64encode(output.getvalue()),
+            'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'res_model': self._name,
+            'res_id': self.id,
+        })
+        return {
+            'type': 'ir.actions.act_url',
+            'url': '/web/content/%s?download=true' % attachment.id,
+            'target': 'self',
+        }
+
+    def action_print_ticket(self):
+        self.ensure_one()
+        return self.env.ref('judo_club.action_report_financial_ticket').report_action(self)
 
     def action_open_transactions(self):
         self.ensure_one()

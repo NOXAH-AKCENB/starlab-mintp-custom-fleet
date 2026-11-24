@@ -162,3 +162,18 @@ class TestJudoClub(TransactionCase):
         data_b = self.env['judo.dashboard'].with_user(user).with_context(
             allowed_company_ids=[company_b.id]).get_dashboard_data()
         self.assertEqual(data_b['kpis']['members_total'], 1)
+
+    def test_export_period_formats(self):
+        dashboard = self.env['judo.dashboard']
+        pdf = dashboard.export_period('2026-01-01', '2026-12-31', 'pdf')
+        self.assertEqual(pdf.get('report_name'), 'judo_club.report_financial_statement')
+        ticket = dashboard.export_period('2026-01-01', '2026-12-31', 'ticket')
+        self.assertEqual(ticket.get('report_name'), 'judo_club.report_financial_ticket')
+        xlsx = dashboard.export_period('2026-01-01', '2026-12-31', 'xlsx')
+        self.assertEqual(xlsx.get('type'), 'ir.actions.act_url')
+        self.assertIn('/web/content/', xlsx.get('url'))
+
+    def test_export_period_rejects_invalid_period(self):
+        with self.assertRaises(UserError):
+            self.env['judo.dashboard'].export_period('2026-12-31', '2026-01-01', 'pdf')
+

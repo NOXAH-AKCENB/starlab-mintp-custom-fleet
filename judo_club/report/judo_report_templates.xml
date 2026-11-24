@@ -124,4 +124,78 @@
             </t>
         </t>
     </template>
+
+    <!-- Ticket de caisse 80 mm : relevé de période résumé -->
+    <record id="paperformat_judo_statement_ticket" model="report.paperformat">
+        <field name="name">Ticket de caisse 80 mm (relevé)</field>
+        <field name="default" eval="False"/>
+        <field name="format">custom</field>
+        <field name="page_width">80</field>
+        <field name="page_height">250</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">3</field>
+        <field name="margin_bottom">3</field>
+        <field name="margin_left">3</field>
+        <field name="margin_right">3</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">96</field>
+    </record>
+
+    <record id="action_report_financial_ticket" model="ir.actions.report">
+        <field name="name">Ticket de caisse – situation de période</field>
+        <field name="model">judo.financial.report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">judo_club.report_financial_ticket</field>
+        <field name="report_file">judo_club.report_financial_ticket</field>
+        <field name="paperformat_id" ref="paperformat_judo_statement_ticket"/>
+        <field name="print_report_name">'Ticket_periode_%s' % (object.date_to or '')</field>
+    </record>
+
+    <template id="report_financial_ticket">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-set="company" t-value="o.company_id"/>
+                <div style="font-family: 'Courier New', monospace; font-size: 11px; color: #000;">
+                    <div style="text-align: center;">
+                        <div style="font-weight: bold; font-size: 14px;" t-out="company.name"/>
+                        <div t-if="company.street" t-out="company.street"/>
+                        <div t-if="company.street2" t-out="company.street2"/>
+                    </div>
+                    <hr style="border-top: 1px dashed #000;"/>
+                    <div style="text-align: center; font-weight: bold;">SITUATION DE PÉRIODE</div>
+                    <div>Du <span t-out="o.date_from"/> au <span t-out="o.date_to"/></div>
+                    <div>Compte : <span t-out="o.bank_account_id.name or 'Tous les comptes'"/></div>
+                    <hr style="border-top: 1px dashed #000;"/>
+                    <table style="width: 100%;">
+                        <tr><td>Solde d'ouverture</td><td style="text-align: right;"><span t-out="o.opening_balance" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                        <tr><td>Recettes</td><td style="text-align: right;"><span t-out="o.total_income" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                        <tr><td>Dépenses</td><td style="text-align: right;"><span t-out="o.total_expense" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                        <tr style="font-weight: bold;"><td>Résultat</td><td style="text-align: right;"><span t-out="o.result" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                    </table>
+                    <hr style="border-top: 1px dashed #000;"/>
+                    <table style="width: 100%;">
+                        <tr><td>Entrées</td><td style="text-align: right;"><span t-out="o.cash_in" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                        <tr><td>Sorties</td><td style="text-align: right;"><span t-out="o.cash_out" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td></tr>
+                    </table>
+                    <div style="font-weight: bold; font-size: 13px; text-align: right; margin-top: 4px;">
+                        SOLDE DE CLÔTURE :
+                        <span t-out="o.closing_balance" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                    </div>
+                    <hr style="border-top: 1px dashed #000;"/>
+                    <div style="font-weight: bold;">Détail par mois</div>
+                    <table style="width: 100%;">
+                        <t t-foreach="o._monthly_breakdown()" t-as="m">
+                            <tr>
+                                <td><span t-out="m['label']"/></td>
+                                <td style="text-align: right;"><span t-out="m['net']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                            </tr>
+                        </t>
+                    </table>
+                    <hr style="border-top: 1px dashed #000;"/>
+                    <div style="text-align: center;">Document de situation interne du club.</div>
+                </div>
+            </t>
+        </t>
+    </template>
 </odoo>

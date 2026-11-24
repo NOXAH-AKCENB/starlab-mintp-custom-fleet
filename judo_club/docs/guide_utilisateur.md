@@ -1,6 +1,6 @@
 # Guide utilisateur – Club de judo
 
-> **Version du guide : 0.4** · Module `judo_club` 17.0.1.0.0 · Dernière mise à jour : voir [CHANGELOG](../CHANGELOG.md)
+> **Version du guide : 0.5** · Module `judo_club` 17.0.1.0.0 · Dernière mise à jour : voir [CHANGELOG](../CHANGELOG.md)
 >
 > Ce guide évolue avec le logiciel. Chaque fonctionnalité porte un statut :
 > ✅ disponible · 🚧 en cours · 📝 prévue.
@@ -59,6 +59,11 @@ Les menus absents de votre compte correspondent à un rôle que vous n'avez pas.
 ## 4. Tableau de bord
 
 ✅ **Disponible** — menu *Club de judo → Tableau de bord*.
+
+**Exporter une période** : choisissez les dates *Du* et *Au* en haut de l'écran, puis cliquez sur :
+- **PDF** : relevé complet (compte de résultat, trésorerie, détail mensuel, liste des transactions) ;
+- **Excel** : fichier à trois onglets, *Synthèse*, *Mensuel* et *Transactions* ;
+- **Ticket de caisse** : situation résumée au format 80 mm, à envoyer sur l'imprimante thermique.
 
 ![Schéma du tableau de bord](images/tableau_de_bord.svg)
 

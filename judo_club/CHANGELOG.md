@@ -2,6 +2,13 @@
 
 Chaque modification du module est notée ici et répercutée dans le guide utilisateur (`docs/guide_utilisateur.md`).
 
+## [17.0.1.1.0] – 2026-11-24
+
+### Ajouté
+- Tableau de bord : choix d'une période, puis export **PDF** (relevé), **Excel** (3 onglets : synthèse, mensuel, transactions) ou **ticket de caisse 80 mm** (situation résumée).
+- Assistant « Situation financière » : boutons d'impression ticket et d'export Excel.
+- Dépendance Python déclarée : `xlsxwriter`.
+
 ## [17.0.1.0.0] – 2026-11-23
 
 ### Ajouté

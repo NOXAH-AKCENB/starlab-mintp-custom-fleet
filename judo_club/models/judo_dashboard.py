@@ -3,7 +3,8 @@ from datetime import timedelta
 
 from dateutil.relativedelta import relativedelta
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 
 class JudoDashboard(models.AbstractModel):
@@ -63,3 +64,21 @@ class JudoDashboard(models.AbstractModel):
                 'amount': t.signed_amount,
             } for t in recent],
         }
+
+    @api.model
+    def export_period(self, date_from, date_to, fmt):
+        """Exporte la situation financière d'une période : fmt = 'pdf', 'ticket' ou 'xlsx'."""
+        if not date_from or not date_to or date_from > date_to:
+            raise UserError(_("La période est invalide : la date de début doit précéder la date de fin."))
+        report = self.env['judo.financial.report'].create({
+            'company_id': self.env.company.id,
+            'date_from': date_from,
+            'date_to': date_to,
+        })
+        if fmt == 'pdf':
+            return report.action_print_pdf()
+        if fmt == 'ticket':
+            return report.action_print_ticket()
+        if fmt == 'xlsx':
+            return report.action_export_xlsx()
+        raise UserError(_("Format d'export inconnu : %s", fmt))
