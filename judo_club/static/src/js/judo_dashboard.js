@@ -25,6 +25,11 @@ export class JudoDashboard extends Component {
             period: { from: iso(new Date(today.getFullYear(), 0, 1)), to: iso(today) },
         });
 
+        // Les méthodes appelées depuis le gabarit doivent être liées au composant
+        for (const name of ["money", "barHeight", "exportAs", "openFees", "openTransactions", "openTransaction"]) {
+            this[name] = this[name].bind(this);
+        }
+
         onWillStart(async () => {
             this.state.data = await this.orm.call("judo.dashboard", "get_dashboard_data", []);
             this.state.loading = false;
@@ -56,7 +61,8 @@ export class JudoDashboard extends Component {
             const action = await this.orm.call("judo.dashboard", "export_period", [from, to, fmt]);
             await this.action.doAction(action);
         } catch (error) {
-            this.notification.add("L'export a échoué. Vérifiez la période et réessayez.", { type: "danger" });
+            const message = (error && error.data && error.data.message) || "L'export a échoué. Vérifiez la période et réessayez.";
+            this.notification.add(message, { type: "danger" });
         } finally {
             this.state.exporting = false;
         }
