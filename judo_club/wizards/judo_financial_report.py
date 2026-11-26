@@ -113,6 +113,18 @@ class JudoFinancialReport(models.TransientModel):
             row['net'] += tx.signed_amount
         return [months[k] for k in sorted(months)]
 
+    def _category_breakdown(self):
+        """Totaux par sens et par catégorie de transaction (état par catégorie)."""
+        self.ensure_one()
+        from ..models.judo_accounting import TX_TYPES
+        labels = dict(TX_TYPES)
+        totals = {}
+        for tx in self._get_transactions():
+            key = (tx.type, tx.category_id.name or '')
+            totals[key] = totals.get(key, 0.0) + tx.amount
+        return [{'type': labels.get(t, t), 'category': c, 'amount': a}
+                for (t, c), a in sorted(totals.items(), key=lambda kv: (kv[0][0], kv[0][1]))]
+
     def action_print_pdf(self):
         self.ensure_one()
         return self.env.ref('judo_club.action_report_financial_statement').report_action(self)
@@ -183,6 +195,16 @@ class JudoFinancialReport(models.TransientModel):
             ws_m.write_number(row, 1, float(line['income']), money)
             ws_m.write_number(row, 2, float(line['expense']), money)
             ws_m.write_number(row, 3, float(line['net']), money)
+
+        ws_c = wb.add_worksheet(_('Par catégorie'))
+        ws_c.set_column(0, 1, 30)
+        ws_c.set_column(2, 2, 18)
+        for col, title in enumerate([_('Sens'), _('Catégorie'), _('Montant')]):
+            ws_c.write(0, col, title, head)
+        for row, line in enumerate(self._category_breakdown(), start=1):
+            ws_c.write(row, 0, line['type'])
+            ws_c.write(row, 1, line['category'])
+            ws_c.write_number(row, 2, float(line['amount']), money)
 
         ws_t = wb.add_worksheet(_('Transactions'))
         ws_t.set_column(0, 0, 12)

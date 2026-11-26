@@ -16,6 +16,11 @@ class ResCompany(models.Model):
         default=7,
         help='Un rappel n\'est renvoyé au même adhérent qu\'après ce délai.',
     )
+    judo_due_day = fields.Integer(
+        string='Jour d\'échéance des cotisations', default=10,
+        help='Les cotisations du mois sont payables avant ce jour (ex. 10).')
+    judo_grade_fee = fields.Monetary(
+        string='Frais de passage de grade', currency_field='currency_id', default=0.0)
     judo_invoice_note = fields.Text(
         string='Mention en pied de facture',
         help='Texte ajouté aux factures du club (ex : conditions de paiement).',

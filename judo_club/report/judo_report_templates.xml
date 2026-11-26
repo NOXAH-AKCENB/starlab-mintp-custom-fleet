@@ -74,6 +74,26 @@
                             </tr>
                         </table>
 
+                        <h4>Par catégorie</h4>
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Sens</th>
+                                    <th>Catégorie</th>
+                                    <th class="text-end">Montant</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o._category_breakdown()" t-as="c">
+                                    <tr>
+                                        <td><span t-out="c['type']"/></td>
+                                        <td><span t-out="c['category']"/></td>
+                                        <td class="text-end"><span t-out="c['amount']" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
                         <h4>Détail mensuel</h4>
                         <table class="table table-sm table-striped">
                             <thead>

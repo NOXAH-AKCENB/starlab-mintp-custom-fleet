@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_judo_grade_session_tree" model="ir.ui.view">
+        <field name="name">judo.grade.session.tree</field>
+        <field name="model">judo.grade.session</field>
+        <field name="arch" type="xml">
+            <tree string="Sessions de passage de grade">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="location"/>
+                <field name="exam_count" string="Participants"/>
+                <field name="state" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_judo_grade_session_form" model="ir.ui.view">
+        <field name="name">judo.grade.session.form</field>
+        <field name="model">judo.grade.session</field>
+        <field name="arch" type="xml">
+            <form string="Session de passage de grade">
+                <header>
+                    <button name="action_print_evaluation" type="object" string="Fiche d'évaluation (PDF)" class="btn-secondary"/>
+                    <button name="action_close" type="object" string="Clôturer et archiver le PV" class="btn-primary"
+                            invisible="state == 'done'"
+                            confirm="Clôturer la session ? Les admis passent au grade sollicité et le PV est archivé."/>
+                    <button name="action_print_pv" type="object" string="Procès-verbal (PDF)" class="btn-secondary"
+                            invisible="state != 'done'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="location"/>
+                            <field name="jury"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="exam_count"/>
+                        </group>
+                    </group>
+                    <field name="exam_ids">
+                        <tree editable="bottom">
+                            <field name="member_id"/>
+                            <field name="current_grade_label" string="Ceinture actuelle"/>
+                            <field name="requested_grade"/>
+                            <field name="amount" sum="Total"/>
+                            <field name="result"/>
+                            <field name="note"/>
+                            <field name="currency_id" invisible="1"/>
+                        </tree>
+                    </field>
+                    <group string="Procès-verbal archivé">
+                        <field name="pv_attachment_ids" nolabel="1">
+                            <tree>
+                                <field name="name"/>
+                                <field name="create_date"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_judo_grade_session" model="ir.actions.act_window">
+        <field name="name">Sessions de passage de grade</field>
+        <field name="res_model">judo.grade.session</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="view_judo_grade_exam_tree" model="ir.ui.view">
+        <field name="name">judo.grade.exam.tree</field>
+        <field name="model">judo.grade.exam</field>
+        <field name="arch" type="xml">
+            <tree string="Passages de grade">
+                <field name="session_id"/>
+                <field name="member_id"/>
+                <field name="current_grade_label" string="Ceinture actuelle"/>
+                <field name="requested_grade_label" string="Grade sollicité"/>
+                <field name="result_label" string="Résultat"/>
+                <field name="amount" sum="Total"/>
+                <field name="state" widget="badge"/>
+                <field name="currency_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_judo_grade_exam" model="ir.actions.act_window">
+        <field name="name">Passages de grade</field>
+        <field name="res_model">judo.grade.exam</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Facturation des passages de grade depuis la liste -->
+    <record id="action_judo_invoice_wizard_exam" model="ir.actions.act_window">
+        <field name="name">Facturer les passages de grade</field>
+        <field name="res_model">judo.invoice.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_judo_grade_exam"/>
+        <field name="binding_view_types">list</field>
+    </record>
+
+    <menuitem id="menu_judo_grades" name="Passages de grade" parent="judo_club.menu_judo_root" sequence="25"/>
+    <menuitem id="menu_judo_grade_session" name="Sessions" parent="menu_judo_grades"
+              action="action_judo_grade_session" sequence="10"/>
+    <menuitem id="menu_judo_grade_exam" name="Participants et paiements" parent="menu_judo_grades"
+              action="action_judo_grade_exam" sequence="20"/>
+</odoo>

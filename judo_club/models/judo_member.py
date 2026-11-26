@@ -5,10 +5,15 @@ from odoo import api, fields, models
 
 GRADES = [
     ('white', 'Blanche'),
+    ('yellow_white', 'Jaune-blanche'),
     ('yellow', 'Jaune'),
+    ('yellow_orange', 'Jaune-orange'),
     ('orange', 'Orange'),
+    ('orange_green', 'Orange-verte'),
     ('green', 'Verte'),
+    ('green_blue', 'Verte-bleue'),
     ('blue', 'Bleue'),
+    ('purple', 'Violette'),
     ('brown', 'Marron'),
     ('black', 'Noire'),
 ]
@@ -62,6 +67,14 @@ class JudoMember(models.Model):
     grade = fields.Selection(GRADES, string='Ceinture', default='white', tracking=True,
                              help='Niveau de compétence (ceinture).')
     dan = fields.Integer(string='Dan', default=0)
+    quartier = fields.Char(string='Quartier')
+    parent_name = fields.Char(string='Nom du parent / tuteur')
+    join_date = fields.Date(string="Date d'adhésion", default=fields.Date.context_today)
+    image_1920 = fields.Image(string='Photo', max_width=1024, max_height=1024)
+    image_128 = fields.Image(string='Photo (vignette)', related='image_1920', max_width=128,
+                             max_height=128, store=True)
+    family_id = fields.Many2one('judo.family', string='Famille', ondelete='set null', index=True)
+    kimono_sold = fields.Boolean(string='Kimono vendu', help='Cochez si le kimono a été acheté au club.')
     category_ids = fields.Many2many(
         'judo.member.category', 'judo_member_category_rel', 'member_id', 'category_id',
         string='Catégories')
@@ -110,6 +123,20 @@ class JudoMember(models.Model):
             fees = rec.fee_ids.filtered(lambda f: f.state in open_states)
             licences = rec.licence_ids.filtered(lambda l: l.state in open_states)
             rec.amount_due = sum(fees.mapped('amount')) + sum(licences.mapped('amount'))
+
+    def _open_items(self):
+        """Éléments impayés (cotisations et licences), du plus ancien au plus récent."""
+        self.ensure_one()
+        open_states = ('to_invoice', 'invoiced')
+        items = [{'label': f.name, 'due': f.due_date, 'amount': f.amount, 'state': f.state}
+                 for f in self.fee_ids.filtered(lambda f: f.state in open_states)]
+        items += [{'label': l.name, 'due': l.invoice_date_due, 'amount': l.amount, 'state': l.state}
+                  for l in self.licence_ids.filtered(lambda l: l.state in open_states)]
+        return sorted(items, key=lambda i: i['due'] or date.max)
+
+    def action_print_relance(self):
+        self.ensure_one()
+        return self.env.ref('judo_club.action_report_relance_member').report_action(self)
 
     # ----- Contact comptable -------------------------------------------------
     def _partner_vals(self):

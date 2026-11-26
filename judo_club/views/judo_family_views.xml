@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_judo_family_tree" model="ir.ui.view">
+        <field name="name">judo.family.tree</field>
+        <field name="model">judo.family</field>
+        <field name="arch" type="xml">
+            <tree string="Familles">
+                <field name="name"/>
+                <field name="responsible_name"/>
+                <field name="quartier"/>
+                <field name="phone"/>
+                <field name="member_count"/>
+                <field name="amount_due" sum="Total non réglé"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_judo_family_form" model="ir.ui.view">
+        <field name="name">judo.family.form</field>
+        <field name="model">judo.family</field>
+        <field name="arch" type="xml">
+            <form string="Famille">
+                <header>
+                    <button name="action_print_relance" type="object" string="Relance famille (PDF)" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group string="Contact">
+                            <field name="responsible_name"/>
+                            <field name="phone"/>
+                            <field name="email"/>
+                            <field name="quartier"/>
+                        </group>
+                        <group string="Situation">
+                            <field name="member_count"/>
+                            <field name="amount_due"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <field name="member_ids">
+                        <tree>
+                            <field name="name"/>
+                            <field name="grade"/>
+                            <field name="amount_due" sum="Total"/>
+                            <field name="state" widget="badge"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_judo_family" model="ir.actions.act_window">
+        <field name="name">Familles</field>
+        <field name="res_model">judo.family</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Relances : cotisations en retard, regroupées par adhérent -->
+    <record id="action_judo_relance" model="ir.actions.act_window">
+        <field name="name">Relances</field>
+        <field name="res_model">judo.fee</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="judo_club.view_judo_fee_search"/>
+        <field name="context">{'search_default_overdue': 1, 'search_default_group_member': 1}</field>
+    </record>
+
+    <menuitem id="menu_judo_family" name="Familles" parent="judo_club.menu_judo_members"
+              action="action_judo_family" sequence="40"/>
+    <menuitem id="menu_judo_relance" name="Relances" parent="judo_club.menu_judo_billing"
+              action="action_judo_relance" sequence="40"/>
+</odoo>

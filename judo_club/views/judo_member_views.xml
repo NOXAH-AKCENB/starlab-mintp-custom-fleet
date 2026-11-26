@@ -22,7 +22,11 @@
         <field name="model">judo.member</field>
         <field name="arch" type="xml">
             <form string="Adhérent">
+                <header>
+                    <button name="action_print_relance" type="object" string="Relance (PDF)" class="btn-secondary"/>
+                </header>
                 <sheet>
+                    <field name="image_1920" widget="image" class="oe_avatar" options="{'preview_image': 'image_128'}"/>
                     <div class="oe_title">
                         <h1><field name="name"/></h1>
                     </div>
@@ -34,6 +38,11 @@
                             <field name="age"/>
                             <field name="gender"/>
                             <field name="category_ids" widget="many2many_tags"/>
+                            <field name="quartier"/>
+                            <field name="parent_name"/>
+                            <field name="join_date"/>
+                            <field name="family_id"/>
+                            <field name="kimono_sold"/>
                         </group>
                         <group string="Contact">
                             <field name="phone"/>
@@ -130,10 +139,45 @@
         </field>
     </record>
 
+
+    <!-- Vue kanban : cartes avec photo, comme les fiches élèves -->
+    <record id="view_judo_member_kanban" model="ir.ui.view">
+        <field name="name">judo.member.kanban</field>
+        <field name="model">judo.member</field>
+        <field name="arch" type="xml">
+            <kanban string="Adhérents" class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="image_128"/>
+                <field name="grade"/>
+                <field name="quartier"/>
+                <field name="family_id"/>
+                <field name="amount_due"/>
+                <field name="currency_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click" style="display: flex; gap: 10px; align-items: center;">
+                            <div>
+                                <field name="image_128" widget="image" style="width: 64px; height: 64px; object-fit: cover; border-radius: 6px;"/>
+                            </div>
+                            <div>
+                                <strong><field name="name"/></strong>
+                                <div class="text-muted"><field name="grade"/><t t-if="record.quartier.raw_value"> · <field name="quartier"/></t></div>
+                                <div t-if="record.family_id.raw_value" class="text-muted">Famille : <field name="family_id"/></div>
+                                <div t-if="record.amount_due.raw_value > 0" class="text-danger">
+                                    Impayé : <field name="amount_due" widget="monetary"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <record id="action_judo_member" model="ir.actions.act_window">
         <field name="name">Adhérents</field>
         <field name="res_model">judo.member</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">kanban,tree,form</field>
         <field name="search_view_id" ref="view_judo_member_search"/>
         <field name="context">{'search_default_active_members': 1}</field>
         <field name="help" type="html">

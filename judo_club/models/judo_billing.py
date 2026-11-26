@@ -79,6 +79,17 @@ class JudoFee(models.Model):
     period = fields.Date(string='Mois', required=True, help='Premier jour du mois concerné.')
     name = fields.Char(string='Libellé', compute='_compute_name', store=True)
 
+    due_date = fields.Date(string='Échéance', compute='_compute_due_date', store=True)
+
+    @api.depends('period', 'company_id.judo_due_day')
+    def _compute_due_date(self):
+        for rec in self:
+            if rec.period:
+                day = min(max(rec.company_id.judo_due_day or 10, 1), 28)
+                rec.due_date = rec.period.replace(day=day)
+            else:
+                rec.due_date = False
+
     @api.depends('member_id.name', 'period')
     def _compute_name(self):
         for rec in self:

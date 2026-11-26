@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_relance_family" model="ir.actions.report">
+        <field name="name">Relance – famille</field>
+        <field name="model">judo.family</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">judo_club.report_relance</field>
+        <field name="report_file">judo_club.report_relance</field>
+        <field name="print_report_name">'Relance_famille_%s' % (object.name or '')</field>
+    </record>
+
+    <record id="action_report_relance_member" model="ir.actions.report">
+        <field name="name">Relance – adhérent</field>
+        <field name="model">judo.member</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">judo_club.report_relance</field>
+        <field name="report_file">judo_club.report_relance</field>
+        <field name="print_report_name">'Relance_%s' % (object.name or '')</field>
+    </record>
+
+    <template id="report_relance">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Relance : paiements en attente</h2>
+                        <p>
+                            <t t-if="o._name == 'judo.family'">
+                                <strong>Famille :</strong> <span t-out="o.name"/>
+                                <t t-if="o.responsible_name"><br/><strong>Responsable :</strong> <span t-out="o.responsible_name"/></t>
+                            </t>
+                            <t t-else="">
+                                <strong>Adhérent :</strong> <span t-out="o.name"/>
+                            </t>
+                        </p>
+                        <t t-set="members" t-value="o.member_ids if o._name == 'judo.family' else o"/>
+                        <t t-foreach="members" t-as="m">
+                            <h4><span t-out="m.name"/></h4>
+                            <t t-set="items" t-value="m._open_items()"/>
+                            <p t-if="not items">Aucun paiement en attente.</p>
+                            <table t-else="" class="table table-sm table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Désignation</th>
+                                        <th>Échéance</th>
+                                        <th class="text-end">Montant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="items" t-as="it">
+                                        <tr>
+                                            <td><span t-out="it['label']"/></td>
+                                            <td><span t-out="it['due'] or '-'"/></td>
+                                            <td class="text-end"><span t-out="it['amount']" t-options="{'widget': 'monetary', 'display_currency': m.currency_id}"/></td>
+                                        </tr>
+                                    </t>
+                                    <tr class="fw-bold">
+                                        <td colspan="2">Total à régler</td>
+                                        <td class="text-end"><span t-out="m.amount_due" t-options="{'widget': 'monetary', 'display_currency': m.currency_id}"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </t>
+                        <p>Merci de régulariser ces paiements. Si vous avez déjà réglé, ignorez ce message.</p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

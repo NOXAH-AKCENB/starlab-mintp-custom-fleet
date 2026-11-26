@@ -6,10 +6,10 @@ from odoo.exceptions import UserError
 
 
 class JudoInvoiceWizard(models.TransientModel):
-    """Crée une facture par contact à partir des cotisations et licences sélectionnées.
-    Permet d'appliquer une remise et un frais supplémentaire."""
+    """Crée une facture par contact à partir des cotisations, licences et passages de grade
+    sélectionnés. Permet d'appliquer une remise et un frais supplémentaire."""
     _name = 'judo.invoice.wizard'
-    _description = 'Facturation des cotisations et licences'
+    _description = 'Facturation des cotisations, licences et passages de grade'
 
     company_id = fields.Many2one('res.company', default=lambda self: self.env.company, required=True)
     currency_id = fields.Many2one(related='company_id.currency_id')
@@ -17,13 +17,15 @@ class JudoInvoiceWizard(models.TransientModel):
                                string='Cotisations')
     licence_ids = fields.Many2many('judo.licence', 'judo_invoice_wiz_licence_rel', 'wizard_id',
                                    'licence_id', string='Licences')
+    exam_ids = fields.Many2many('judo.grade.exam', 'judo_invoice_wiz_exam_rel', 'wizard_id',
+                                'exam_id', string='Passages de grade')
     invoice_date = fields.Date(string='Date de facture', required=True,
                                default=fields.Date.context_today)
     invoice_date_due = fields.Date(
-        string='Échéance', required=True,
+        string='Échéance (si non imposée par la cotisation)', required=True,
         default=lambda self: fields.Date.context_today(self) + timedelta(days=30))
     discount_percent = fields.Float(string='Remise (%)', digits=(5, 2), default=0.0,
-                                    help='Appliquée aux cotisations et licences.')
+                                    help='Appliquée aux cotisations, licences et passages de grade.')
     extra_label = fields.Char(string='Frais supplémentaire (libellé)',
                               help='Ajouté une fois à chaque facture créée.')
     extra_amount = fields.Monetary(string='Montant du frais supplémentaire',
@@ -42,6 +44,10 @@ class JudoInvoiceWizard(models.TransientModel):
             licences = self.env['judo.licence'].browse(active_ids).filtered(
                 lambda l: l.state == 'to_invoice')
             res['licence_ids'] = [(6, 0, licences.ids)]
+        elif active_model == 'judo.grade.exam':
+            exams = self.env['judo.grade.exam'].browse(active_ids).filtered(
+                lambda e: e.state == 'to_invoice')
+            res['exam_ids'] = [(6, 0, exams.ids)]
         return res
 
     def _line(self, product, label, price, discount=0.0):
@@ -64,7 +70,8 @@ class JudoInvoiceWizard(models.TransientModel):
 
         fees = self.fee_ids.filtered(lambda f: f.state == 'to_invoice')
         licences = self.licence_ids.filtered(lambda l: l.state == 'to_invoice')
-        if not fees and not licences:
+        exams = self.exam_ids.filtered(lambda e: e.state == 'to_invoice')
+        if not (fees or licences or exams):
             raise UserError(_("Aucune ligne à facturer. Les éléments déjà facturés sont ignorés."))
 
         journal = self.env['account.journal'].search(
@@ -75,30 +82,38 @@ class JudoInvoiceWizard(models.TransientModel):
         product_fee = self.env.ref('judo_club.product_judo_fee')
         product_licence = self.env.ref('judo_club.product_judo_licence')
         product_extra = self.env.ref('judo_club.product_judo_extra')
+        product_grade = self.env.ref('judo_club.product_judo_grade')
 
         invoices = self.env['account.move']
-        partners = (fees | licences).mapped('partner_id')
+        partners = (fees | licences | exams).mapped('partner_id')
         for partner in partners:
             p_fees = fees.filtered(lambda f: f.partner_id == partner)
             p_licences = licences.filtered(lambda l: l.partner_id == partner)
+            p_exams = exams.filtered(lambda e: e.partner_id == partner)
+
             lines = [self._line(product_fee, f.name, f.amount, self.discount_percent) for f in p_fees]
             lines += [self._line(product_licence, l.name, l.amount, self.discount_percent)
                       for l in p_licences]
+            lines += [self._line(product_grade, e.name, e.amount, self.discount_percent)
+                      for e in p_exams]
             if self.extra_amount and self.extra_label:
                 lines.append(self._line(product_extra, self.extra_label, self.extra_amount))
 
+            # Échéance : celle du mois le plus proche (ex. le 10), sinon celle saisie
+            dues = [f.due_date for f in p_fees if f.due_date] or [self.invoice_date_due]
             move = self.env['account.move'].create({
                 'move_type': 'out_invoice',
                 'partner_id': partner.id,
                 'journal_id': journal.id,
                 'company_id': self.company_id.id,
                 'invoice_date': self.invoice_date,
-                'invoice_date_due': self.invoice_date_due,
+                'invoice_date_due': min(dues),
                 'narration': self._narration(),
                 'invoice_line_ids': lines,
             })
             p_fees.write({'invoice_id': move.id})
             p_licences.write({'invoice_id': move.id})
+            p_exams.write({'invoice_id': move.id})
             invoices |= move
 
         return {

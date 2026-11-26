@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Club de Judo – Adhérents, cotisations, facturation et comptabilité',
-    'version': '17.0.1.1.0',
+    'version': '17.0.1.2.0',
     'category': 'Associations',
     'summary': 'Gestion d\'un club de judo : adhérents, cours, cotisations mensuelles, licences, '
                'facturation, comptabilité simplifiée et rapports financiers.',
@@ -14,7 +14,11 @@
         'security/ir.model.access.csv',
         'data/judo_data.xml',
         'report/judo_report_templates.xml',
+        'report/judo_relance_report.xml',
+        'report/judo_grade_report.xml',
         'views/judo_dashboard_views.xml',
+        'views/judo_family_views.xml',
+        'views/judo_grade_views.xml',
         'views/judo_member_views.xml',
         'views/judo_membership_views.xml',
         'views/judo_course_views.xml',

@@ -24,6 +24,14 @@
         <field name="purchase_ok" eval="False"/>
     </record>
 
+    <record id="product_judo_grade" model="product.product">
+        <field name="name">Passage de grade judo</field>
+        <field name="type">service</field>
+        <field name="list_price">0</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+    </record>
+
     <!-- Rappels pour cotisations impayées -->
     <record id="mail_template_judo_fee_reminder" model="mail.template">
         <field name="name">Club de judo : rappel de cotisation impayée</field>

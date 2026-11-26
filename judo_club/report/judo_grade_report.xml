@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_grade_evaluation" model="ir.actions.report">
+        <field name="name">Fiche d'évaluation (passage de grade)</field>
+        <field name="model">judo.grade.session</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">judo_club.report_grade_evaluation</field>
+        <field name="report_file">judo_club.report_grade_evaluation</field>
+        <field name="print_report_name">'Fiche_evaluation_%s' % (object.date or '')</field>
+    </record>
+
+    <record id="action_report_grade_pv" model="ir.actions.report">
+        <field name="name">Procès-verbal de passage de grade</field>
+        <field name="model">judo.grade.session</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">judo_club.report_grade_pv</field>
+        <field name="report_file">judo_club.report_grade_pv</field>
+        <field name="print_report_name">'PV_passage_%s' % (object.date or '')</field>
+    </record>
+
+    <template id="report_grade_session_header">
+        <h2 t-out="o.name"/>
+        <p>
+            <strong>Date :</strong> <span t-out="o.date"/><br/>
+            <t t-if="o.location"><strong>Lieu :</strong> <span t-out="o.location"/><br/></t>
+            <t t-if="o.jury"><strong>Jury :</strong> <span t-out="o.jury"/></t>
+        </p>
+    </template>
+
+    <template id="report_grade_evaluation">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Fiche d'évaluation</h2>
+                        <t t-call="judo_club.report_grade_session_header"/>
+                        <t t-foreach="o._grade_groups()" t-as="g">
+                            <h4>Grade sollicité : <span t-out="g['label']"/></h4>
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>N°</th>
+                                        <th>Nom et prénom</th>
+                                        <th>Ceinture actuelle</th>
+                                        <th>Résultat</th>
+                                        <th>Observations</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="g['exams']" t-as="e">
+                                        <tr style="height: 28px;">
+                                            <td><span t-out="e_index + 1"/></td>
+                                            <td><span t-out="e.member_id.name"/></td>
+                                            <td><span t-out="e.current_grade_label"/></td>
+                                            <td>☐ Admis &#160; ☐ Non admis</td>
+                                            <td/>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_grade_pv">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Procès-verbal de passage de grade</h2>
+                        <t t-call="judo_club.report_grade_session_header"/>
+                        <t t-set="counts" t-value="o._result_counts()"/>
+                        <p>Admis : <span t-out="counts['passed']"/> · Non admis : <span t-out="counts['failed']"/>
+                            <t t-if="counts['pending']"> · En attente : <span t-out="counts['pending']"/></t></p>
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Nom et prénom</th>
+                                    <th>Ceinture actuelle</th>
+                                    <th>Grade sollicité</th>
+                                    <th>Résultat</th>
+                                    <th>Observations</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.exam_ids.sorted(lambda x: x.member_id.name or '')" t-as="e">
+                                    <tr>
+                                        <td><span t-out="e.member_id.name"/></td>
+                                        <td><span t-out="e.current_grade_label"/></td>
+                                        <td><span t-out="e.requested_grade_label"/></td>
+                                        <td><span t-out="e.result_label"/></td>
+                                        <td><span t-out="e.note or ''"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <p style="margin-top: 40px;">Fait le <span t-out="o.date"/>.</p>
+                        <table style="width: 100%; margin-top: 30px;">
+                            <tr>
+                                <td style="width: 50%;">Le jury<br/><br/><br/>Signature</td>
+                                <td style="width: 50%;">Le responsable du club<br/><br/><br/>Signature</td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -196,6 +196,7 @@
                     <group string="Éléments à facturer">
                         <field name="fee_ids" widget="many2many_tags"/>
                         <field name="licence_ids" widget="many2many_tags"/>
+                        <field name="exam_ids" widget="many2many_tags"/>
                     </group>
                     <group string="Facture">
                         <field name="invoice_date"/>

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from datetime import date
 
+from unittest import mock
+
 from odoo.exceptions import UserError, ValidationError
 from odoo.tests import TransactionCase, tagged
 
@@ -176,4 +178,41 @@ class TestJudoClub(TransactionCase):
     def test_export_period_rejects_invalid_period(self):
         with self.assertRaises(UserError):
             self.env['judo.dashboard'].export_period('2026-12-31', '2026-01-01', 'pdf')
+
+    def test_fee_due_date_is_tenth_of_month(self):
+        self._membership()
+        fees = self.env['judo.fee']._generate_fees_for_period(date(2026, 10, 1))
+        self.assertEqual(fees.due_date, date(2026, 10, 10))
+
+    def test_family_aggregates_amount_due(self):
+        self._membership()
+        family = self.env['judo.family'].create({'name': 'Famille Dupont'})
+        self.member.family_id = family
+        self.env['judo.fee']._generate_fees_for_period(date(2026, 10, 1))
+        self.assertEqual(family.member_count, 1)
+        self.assertEqual(family.amount_due, 10000 + 15000)
+
+    def test_grade_list_and_passage_promotion(self):
+        from odoo.addons.judo_club.models.judo_member import GRADES
+        self.assertEqual(len(GRADES), 12)
+        self.assertEqual(dict(GRADES)['purple'], 'Violette')
+        session = self.env['judo.grade.session'].create({'name': 'Passage test', 'date': date(2026, 12, 1)})
+        exam = self.env['judo.grade.exam'].create({
+            'session_id': session.id, 'member_id': self.member.id,
+            'requested_grade': 'yellow', 'result': 'passed', 'amount': 5000,
+        })
+        # Le PDF du procès-verbal n'est pas requis pour tester la promotion
+        with mock.patch.object(type(session), '_archive_pv', lambda self: None):
+            session.action_close()
+        self.assertEqual(self.member.grade, 'yellow')
+        self.assertEqual(session.state, 'done')
+        self.assertIn('Jean', exam.name)
+
+    def test_grade_session_cannot_close_with_pending_results(self):
+        session = self.env['judo.grade.session'].create({'name': 'Passage en attente', 'date': date(2026, 12, 2)})
+        self.env['judo.grade.exam'].create({
+            'session_id': session.id, 'member_id': self.member.id, 'requested_grade': 'orange', 'amount': 0,
+        })
+        with self.assertRaises(UserError):
+            session.action_close()
 

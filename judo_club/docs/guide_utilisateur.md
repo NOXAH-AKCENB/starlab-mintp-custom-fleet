@@ -1,6 +1,6 @@
 # Guide utilisateur – Club de judo
 
-> **Version du guide : 0.5** · Module `judo_club` 17.0.1.1.0 · Dernière mise à jour : voir [CHANGELOG](../CHANGELOG.md)
+> **Version du guide : 0.6** · Module `judo_club` 17.0.1.2.0 · Dernière mise à jour : voir [CHANGELOG](../CHANGELOG.md)
 >
 > Ce guide évolue avec le logiciel. Chaque fonctionnalité porte un statut :
 > ✅ disponible · 🚧 en cours · 📝 prévue.
@@ -232,5 +232,23 @@ Vérifiez que l'adhésion est active et que la saison couvre ce mois. Sinon, rel
 Vérifiez l'adresse e-mail du contact comptable sur la fiche de l'adhérent, et le délai entre deux rappels.
 
 ---
+
+## 16. Nouveautés : familles, photos, relances et passages de grade
+
+✅ **Disponible**
+
+- **Adhérents** : vue en cartes avec photo (par défaut). Chaque fiche contient le quartier, le nom du parent ou tuteur, la date d'adhésion, la photo, la famille et la case « Kimono vendu ».
+- **Familles** : menu Adhérents → Familles. Une famille regroupe ses adhérents et affiche le total impayé.
+- **Échéance** : les cotisations sont payables avant le **10 du mois** (jour configurable dans Paramètres → Société → Club de judo).
+- **Relances PDF** : depuis un adhérent ou une famille, bouton *Relance (PDF)*. Menu Cotisations → **Relances** : liste des impayés par adhérent.
+- **États par catégorie** : la situation financière (PDF et Excel) affiche les totaux par catégorie.
+- **Passages de grade** : menu *Passages de grade*.
+  1. Créer une session (date, lieu, jury).
+  2. Ajouter les participants avec le grade sollicité et le montant des frais.
+  3. Imprimer la fiche d'évaluation, qui liste les noms classés par grade sollicité.
+  4. Facturer les frais (liste des participants → *Facturer les passages de grade*).
+  5. Renseigner le résultat de chacun, puis **Clôturer** : les admis changent de ceinture et le procès-verbal est archivé en PDF sur la session.
+
+Les points encore à faire (SMS, stock de kimonos, location de salle) sont suivis dans `docs/backlog_recommandations.md`.
 
 *Ce guide est mis à jour à chaque évolution. Signalez toute erreur ou fonctionnalité manquante au responsable du logiciel.*

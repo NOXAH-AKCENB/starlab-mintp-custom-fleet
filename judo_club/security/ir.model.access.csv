@@ -25,3 +25,9 @@ access_judo_transaction_category_treasurer,judo.transaction.category treasurer,m
 access_judo_transaction_category_manager,judo.transaction.category manager,model_judo_transaction_category,group_judo_manager,1,1,1,1
 access_judo_transaction_treasurer,judo.transaction treasurer,model_judo_transaction,group_judo_treasurer,1,1,1,0
 access_judo_transaction_manager,judo.transaction manager,model_judo_transaction,group_judo_manager,1,1,1,1
+access_judo_family_user,judo.family user,model_judo_family,group_judo_user,1,1,1,0
+access_judo_family_manager,judo.family manager,model_judo_family,group_judo_manager,1,1,1,1
+access_judo_grade_session_user,judo.grade.session user,model_judo_grade_session,group_judo_user,1,1,1,0
+access_judo_grade_session_manager,judo.grade.session manager,model_judo_grade_session,group_judo_manager,1,1,1,1
+access_judo_grade_exam_user,judo.grade.exam user,model_judo_grade_exam,group_judo_user,1,1,1,0
+access_judo_grade_exam_manager,judo.grade.exam manager,model_judo_grade_exam,group_judo_manager,1,1,1,1
