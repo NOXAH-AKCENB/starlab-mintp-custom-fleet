@@ -57,6 +57,8 @@ class JudoMember(models.Model):
     name = fields.Char(string='Nom complet', compute='_compute_name', store=True)
     birth_date = fields.Date(string='Date de naissance', tracking=True)
     age = fields.Integer(string='Âge', compute='_compute_age')
+    age_category_id = fields.Many2one('judo.age.category', string="Catégorie d'âge",
+                                      compute='_compute_age_category')
     gender = fields.Selection([('male', 'Homme'), ('female', 'Femme')], string='Sexe')
     phone = fields.Char(string='Téléphone')
     email = fields.Char(string='Email')
@@ -123,6 +125,15 @@ class JudoMember(models.Model):
             fees = rec.fee_ids.filtered(lambda f: f.state in open_states)
             licences = rec.licence_ids.filtered(lambda l: l.state in open_states)
             rec.amount_due = sum(fees.mapped('amount')) + sum(licences.mapped('amount'))
+
+    @api.depends('birth_date')
+    def _compute_age_category(self):
+        categories = self.env['judo.age.category'].search([('active', '=', True)])
+        for rec in self:
+            rec.age_category_id = False
+            if rec.age:
+                match = categories.filtered(lambda c: c.age_min <= rec.age <= c.age_max)
+                rec.age_category_id = match[:1]
 
     def _open_items(self):
         """Éléments impayés (cotisations et licences), du plus ancien au plus récent."""

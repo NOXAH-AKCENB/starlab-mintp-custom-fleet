@@ -216,3 +216,50 @@ class TestJudoClub(TransactionCase):
         with self.assertRaises(UserError):
             session.action_close()
 
+    def test_age_category_from_birth_date(self):
+        from datetime import date as _date
+        child = self.env['judo.member'].create({
+            'first_name': 'Léa', 'last_name': 'Mbarga',
+            'birth_date': _date(_date.today().year - 12, 1, 1),
+        })
+        self.assertTrue(child.age_category_id, "Un enfant de 12 ans doit appartenir à une catégorie")
+        self.assertEqual(child.age_category_id.age_min, 12)
+
+    def test_stock_purchase_sale_and_insufficient_stock(self):
+        article = self.env['judo.article'].create({'name': 'Kimono test', 'sale_price': 20000,
+                                                   'purchase_price': 12000, 'is_kimono': True})
+        self.env['judo.stock.move'].create({'article_id': article.id, 'kind': 'purchase',
+                                            'quantity': 5, 'unit_price': 12000})
+        self.env['judo.stock.move'].create({'article_id': article.id, 'kind': 'sale',
+                                            'quantity': 2, 'unit_price': 20000})
+        self.assertEqual(article.quantity, 3)
+        with self.assertRaises(ValidationError):
+            self.env['judo.stock.move'].create({'article_id': article.id, 'kind': 'sale',
+                                                'quantity': 4, 'unit_price': 20000})
+
+    def test_sale_creates_transaction_and_marks_kimono(self):
+        article = self.env['judo.article'].create({'name': 'Kimono vente', 'sale_price': 20000,
+                                                   'is_kimono': True})
+        self.env['judo.stock.move'].create({'article_id': article.id, 'kind': 'purchase', 'quantity': 1})
+        move = self.env['judo.stock.move'].create({
+            'article_id': article.id, 'kind': 'sale', 'quantity': 1, 'unit_price': 20000,
+            'member_id': self.member.id, 'bank_account_id': self.bank.id, 'category_id': self.income.id,
+        })
+        self.assertTrue(move.transaction_id)
+        self.assertEqual(move.transaction_id.amount, 20000)
+        self.assertTrue(self.member.kimono_sold)
+
+    def test_room_booking_amount_and_overlap(self):
+        room = self.env['judo.room'].create({'name': 'Salle test', 'hourly_rate': 15000})
+        booking = self.env['judo.room.booking'].create({
+            'room_id': room.id, 'date': date(2026, 12, 5), 'time_start': 18, 'time_end': 20,
+            'activity': 'Fitness',
+        })
+        self.assertEqual(booking.amount, 30000)
+        booking.action_confirm()
+        with self.assertRaises(ValidationError):
+            clash = self.env['judo.room.booking'].create({
+                'room_id': room.id, 'date': date(2026, 12, 5), 'time_start': 19, 'time_end': 21,
+            })
+            clash.action_confirm()
+

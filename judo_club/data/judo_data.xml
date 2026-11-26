@@ -32,6 +32,44 @@
         <field name="purchase_ok" eval="False"/>
     </record>
 
+    <record id="product_judo_room" model="product.product">
+        <field name="name">Location de salle</field>
+        <field name="type">service</field>
+        <field name="list_price">0</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+    </record>
+
+    <!-- Catégories d'âge : valeurs de départ, modifiables dans Configuration → Catégories d'âge -->
+    <record id="age_cat_mini" model="judo.age.category">
+        <field name="name">Mini-judo</field><field name="sequence">10</field>
+        <field name="age_min">4</field><field name="age_max">6</field>
+    </record>
+    <record id="age_cat_poussins" model="judo.age.category">
+        <field name="name">Poussins</field><field name="sequence">20</field>
+        <field name="age_min">7</field><field name="age_max">9</field>
+    </record>
+    <record id="age_cat_benjamins" model="judo.age.category">
+        <field name="name">Benjamins</field><field name="sequence">30</field>
+        <field name="age_min">10</field><field name="age_max">11</field>
+    </record>
+    <record id="age_cat_minimes" model="judo.age.category">
+        <field name="name">Minimes</field><field name="sequence">40</field>
+        <field name="age_min">12</field><field name="age_max">13</field>
+    </record>
+    <record id="age_cat_cadets" model="judo.age.category">
+        <field name="name">Cadets</field><field name="sequence">50</field>
+        <field name="age_min">14</field><field name="age_max">16</field>
+    </record>
+    <record id="age_cat_juniors" model="judo.age.category">
+        <field name="name">Juniors</field><field name="sequence">60</field>
+        <field name="age_min">17</field><field name="age_max">20</field>
+    </record>
+    <record id="age_cat_seniors" model="judo.age.category">
+        <field name="name">Seniors</field><field name="sequence">70</field>
+        <field name="age_min">21</field><field name="age_max">99</field>
+    </record>
+
     <!-- Rappels pour cotisations impayées -->
     <record id="mail_template_judo_fee_reminder" model="mail.template">
         <field name="name">Club de judo : rappel de cotisation impayée</field>

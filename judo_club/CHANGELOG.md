@@ -2,6 +2,22 @@
 
 Chaque modification du module est notée ici et répercutée dans le guide utilisateur (`docs/guide_utilisateur.md`).
 
+## [17.0.1.3.0] – 2026-11-26
+
+### Ajouté
+- Catégories d'âge calculées sur la fiche adhérent, plages modifiables.
+- Matériel : articles, stock (achats, ventes, inventaire), encaissement automatique des ventes, case « Kimono vendu ».
+- Location de salle : salles, réservations de créneaux avec contrôle de conflit, facturation.
+- Montants de départ (à remplacer) : cotisation 7 500, licence 12 500, passage de grade 5 000, location 15 000 par heure.
+
+## [17.0.1.2.0] – 2026-11-26
+
+### Ajouté
+- Familles, photos et vue kanban des adhérents ; relances PDF par adhérent ou famille.
+- Échéance des cotisations au 10 du mois (configurable).
+- Passages de grade : sessions, fiche d'évaluation, facturation, promotion et procès-verbal archivé.
+- États par catégorie (PDF et Excel).
+
 ## [17.0.1.1.0] – 2026-11-24
 
 ### Ajouté

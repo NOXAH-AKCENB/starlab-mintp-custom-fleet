@@ -1,6 +1,6 @@
 # Guide utilisateur – Club de judo
 
-> **Version du guide : 0.6** · Module `judo_club` 17.0.1.2.0 · Dernière mise à jour : voir [CHANGELOG](../CHANGELOG.md)
+> **Version du guide : 0.7** · Module `judo_club` 17.0.1.3.0 · Dernière mise à jour : voir [CHANGELOG](../CHANGELOG.md)
 >
 > Ce guide évolue avec le logiciel. Chaque fonctionnalité porte un statut :
 > ✅ disponible · 🚧 en cours · 📝 prévue.
@@ -249,6 +249,24 @@ Vérifiez l'adresse e-mail du contact comptable sur la fiche de l'adhérent, et 
   4. Facturer les frais (liste des participants → *Facturer les passages de grade*).
   5. Renseigner le résultat de chacun, puis **Clôturer** : les admis changent de ceinture et le procès-verbal est archivé en PDF sur la session.
 
-Les points encore à faire (SMS, stock de kimonos, location de salle) sont suivis dans `docs/backlog_recommandations.md`.
+Les points encore à faire (SMS, gestion des employés) sont suivis dans `docs/backlog_recommandations.md`.
+## 17. Catégories d'âge, matériel et location de salle
+
+✅ **Disponible**
+
+- **Catégories d'âge** : calculées automatiquement sur la fiche adhérent à partir de sa date de naissance (mini-judo, poussins, benjamins, minimes, cadets, juniors, seniors). Les plages sont modifiables dans *Configuration → Catégories d'âge*.
+- **Matériel** : menu *Matériel → Articles et stock*. Chaque article a un prix d'achat, un prix de vente et un stock calculé à partir des mouvements.
+  - *Achat* : entrée de stock.
+  - *Vente* : sortie de stock. Si la vente indique un compte et une catégorie de recette, la recette est enregistrée automatiquement dans la comptabilité, et « Kimono vendu » est coché sur la fiche de l'adhérent pour un kimono.
+  - *Inventaire* : correction de stock (quantité négative pour retirer).
+  - Une vente qui dépasse le stock disponible est refusée.
+- **Location de salle** : menu *Salle*.
+  1. Créer les salles avec leur tarif à l'heure (*Salle → Salles*).
+  2. Créer une réservation : salle, date, heure de début et de fin, activité, client.
+  3. Confirmer le créneau. Un créneau déjà confirmé dans la même salle ne peut pas être réservé à nouveau.
+  4. *Facturer la location* : une facture est créée pour le client.
+
+> Les montants proposés (cotisation, licence, passage de grade, tarif de location, prix des articles) sont des valeurs de départ. Remplacez-les dans les paramètres de la société, les saisons et les fiches concernées.
+
 
 *Ce guide est mis à jour à chaque évolution. Signalez toute erreur ou fonctionnalité manquante au responsable du logiciel.*

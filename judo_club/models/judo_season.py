@@ -11,7 +11,7 @@ class JudoSeason(models.Model):
     date_start = fields.Date(string='Début', required=True)
     date_end = fields.Date(string='Fin', required=True)
     licence_amount = fields.Monetary(
-        string='Montant de la licence', currency_field='currency_id',
+        string='Montant de la licence', currency_field='currency_id', default=12500.0,
         help='Montant de la licence fédérale pour cette saison.')
     company_id = fields.Many2one(
         'res.company', string='Société', default=lambda self: self.env.company, required=True)

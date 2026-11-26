@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Catégories d'âge (Configuration) -->
+    <record id="view_judo_age_category_tree" model="ir.ui.view">
+        <field name="name">judo.age.category.tree</field>
+        <field name="model">judo.age.category</field>
+        <field name="arch" type="xml">
+            <tree string="Catégories d'âge" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="age_min"/>
+                <field name="age_max"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+    <record id="action_judo_age_category" model="ir.actions.act_window">
+        <field name="name">Catégories d'âge</field>
+        <field name="res_model">judo.age.category</field>
+        <field name="view_mode">tree</field>
+        <field name="context">{'active_test': False}</field>
+    </record>
+
+    <!-- Articles -->
+    <record id="view_judo_article_tree" model="ir.ui.view">
+        <field name="name">judo.article.tree</field>
+        <field name="model">judo.article</field>
+        <field name="arch" type="xml">
+            <tree string="Articles">
+                <field name="name"/>
+                <field name="is_kimono"/>
+                <field name="purchase_price"/>
+                <field name="sale_price"/>
+                <field name="quantity" string="En stock"/>
+                <field name="stock_value" sum="Valeur du stock"/>
+                <field name="currency_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_judo_article_form" model="ir.ui.view">
+        <field name="name">judo.article.form</field>
+        <field name="model">judo.article</field>
+        <field name="arch" type="xml">
+            <form string="Article">
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="purchase_price"/>
+                            <field name="sale_price"/>
+                            <field name="is_kimono"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="quantity"/>
+                            <field name="stock_value"/>
+                        </group>
+                    </group>
+                    <field name="move_ids">
+                        <tree>
+                            <field name="date"/>
+                            <field name="kind"/>
+                            <field name="quantity"/>
+                            <field name="signed_qty" sum="Variation"/>
+                            <field name="unit_price"/>
+                            <field name="member_id"/>
+                            <field name="transaction_id"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_judo_article" model="ir.actions.act_window">
+        <field name="name">Articles et stock</field>
+        <field name="res_model">judo.article</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Mouvements de stock (achats, ventes, inventaire) -->
+    <record id="view_judo_stock_move_tree" model="ir.ui.view">
+        <field name="name">judo.stock.move.tree</field>
+        <field name="model">judo.stock.move</field>
+        <field name="arch" type="xml">
+            <tree string="Mouvements de stock">
+                <field name="date"/>
+                <field name="article_id"/>
+                <field name="kind" widget="badge"/>
+                <field name="quantity"/>
+                <field name="signed_qty" sum="Variation"/>
+                <field name="unit_price"/>
+                <field name="amount" sum="Montant"/>
+                <field name="member_id"/>
+                <field name="transaction_id" optional="hide"/>
+                <field name="currency_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_judo_stock_move_form" model="ir.ui.view">
+        <field name="name">judo.stock.move.form</field>
+        <field name="model">judo.stock.move</field>
+        <field name="arch" type="xml">
+            <form string="Mouvement de stock">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="article_id"/>
+                            <field name="kind"/>
+                            <field name="quantity"/>
+                            <field name="unit_price"/>
+                            <field name="amount"/>
+                        </group>
+                        <group string="Vente (encaissement automatique)">
+                            <field name="member_id"/>
+                            <field name="bank_account_id"/>
+                            <field name="category_id"/>
+                            <field name="transaction_id"/>
+                            <field name="note"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_judo_stock_move" model="ir.actions.act_window">
+        <field name="name">Mouvements de stock</field>
+        <field name="res_model">judo.stock.move</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Salles -->
+    <record id="view_judo_room_tree" model="ir.ui.view">
+        <field name="name">judo.room.tree</field>
+        <field name="model">judo.room</field>
+        <field name="arch" type="xml">
+            <tree string="Salles">
+                <field name="name"/>
+                <field name="capacity"/>
+                <field name="hourly_rate"/>
+                <field name="currency_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+    <record id="action_judo_room" model="ir.actions.act_window">
+        <field name="name">Salles</field>
+        <field name="res_model">judo.room</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Réservations de créneaux et facturation -->
+    <record id="view_judo_room_booking_tree" model="ir.ui.view">
+        <field name="name">judo.room.booking.tree</field>
+        <field name="model">judo.room.booking</field>
+        <field name="arch" type="xml">
+            <tree string="Réservations" decoration-muted="state == 'cancelled'" decoration-success="state == 'invoiced'">
+                <field name="date"/>
+                <field name="room_id"/>
+                <field name="time_start" widget="float_time"/>
+                <field name="time_end" widget="float_time"/>
+                <field name="activity"/>
+                <field name="partner_id"/>
+                <field name="amount" sum="Total"/>
+                <field name="state" widget="badge"/>
+                <field name="currency_id" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_judo_room_booking_form" model="ir.ui.view">
+        <field name="name">judo.room.booking.form</field>
+        <field name="model">judo.room.booking</field>
+        <field name="arch" type="xml">
+            <form string="Réservation">
+                <header>
+                    <button name="action_confirm" type="object" string="Confirmer le créneau" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_invoice" type="object" string="Facturer la location" class="btn-primary"
+                            invisible="state != 'confirmed'"/>
+                    <button name="action_cancel" type="object" string="Annuler" class="btn-secondary"
+                            invisible="state in ('invoiced', 'cancelled')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,invoiced"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group string="Créneau">
+                            <field name="room_id"/>
+                            <field name="date"/>
+                            <field name="time_start" widget="float_time"/>
+                            <field name="time_end" widget="float_time"/>
+                            <field name="activity"/>
+                        </group>
+                        <group string="Facturation">
+                            <field name="partner_id"/>
+                            <field name="amount"/>
+                            <field name="invoice_id"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_judo_room_booking" model="ir.actions.act_window">
+        <field name="name">Réservations de salle</field>
+        <field name="res_model">judo.room.booking</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem id="menu_judo_stock" name="Matériel" parent="judo_club.menu_judo_root" sequence="35"/>
+    <menuitem id="menu_judo_article" name="Articles et stock" parent="menu_judo_stock"
+              action="action_judo_article" sequence="10"/>
+    <menuitem id="menu_judo_stock_move" name="Mouvements" parent="menu_judo_stock"
+              action="action_judo_stock_move" sequence="20"/>
+    <menuitem id="menu_judo_rooms" name="Salle" parent="judo_club.menu_judo_root" sequence="36"/>
+    <menuitem id="menu_judo_room_booking" name="Réservations et location" parent="menu_judo_rooms"
+              action="action_judo_room_booking" sequence="10"/>
+    <menuitem id="menu_judo_room" name="Salles" parent="menu_judo_rooms"
+              action="action_judo_room" sequence="20"/>
+    <menuitem id="menu_judo_age_category" name="Catégories d'âge" parent="judo_club.menu_judo_configuration"
+              action="action_judo_age_category" sequence="20"/>
+</odoo>

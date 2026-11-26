@@ -31,3 +31,13 @@ access_judo_grade_session_user,judo.grade.session user,model_judo_grade_session,
 access_judo_grade_session_manager,judo.grade.session manager,model_judo_grade_session,group_judo_manager,1,1,1,1
 access_judo_grade_exam_user,judo.grade.exam user,model_judo_grade_exam,group_judo_user,1,1,1,0
 access_judo_grade_exam_manager,judo.grade.exam manager,model_judo_grade_exam,group_judo_manager,1,1,1,1
+access_judo_age_category_user,judo.age.category user,model_judo_age_category,group_judo_user,1,0,0,0
+access_judo_age_category_manager,judo.age.category manager,model_judo_age_category,group_judo_manager,1,1,1,1
+access_judo_article_user,judo.article user,model_judo_article,group_judo_user,1,1,1,0
+access_judo_article_manager,judo.article manager,model_judo_article,group_judo_manager,1,1,1,1
+access_judo_stock_move_user,judo.stock.move user,model_judo_stock_move,group_judo_user,1,1,1,0
+access_judo_stock_move_manager,judo.stock.move manager,model_judo_stock_move,group_judo_manager,1,1,1,1
+access_judo_room_user,judo.room user,model_judo_room,group_judo_user,1,0,0,0
+access_judo_room_manager,judo.room manager,model_judo_room,group_judo_manager,1,1,1,1
+access_judo_room_booking_user,judo.room.booking user,model_judo_room_booking,group_judo_user,1,1,1,0
+access_judo_room_booking_manager,judo.room.booking manager,model_judo_room_booking,group_judo_manager,1,1,1,1

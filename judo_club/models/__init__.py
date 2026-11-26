@@ -9,3 +9,6 @@ from . import judo_accounting
 from . import judo_dashboard
 from . import judo_family
 from . import judo_grade
+from . import judo_age_category
+from . import judo_stock
+from . import judo_room

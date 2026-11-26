@@ -115,4 +115,28 @@
         <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
         <field name="global" eval="True"/>
     </record>
+    <record id="rule_judo_article_company" model="ir.rule">
+        <field name="name">Articles : société</field>
+        <field name="model_id" ref="model_judo_article"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="rule_judo_stock_move_company" model="ir.rule">
+        <field name="name">Mouvements de stock : société</field>
+        <field name="model_id" ref="model_judo_stock_move"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="rule_judo_room_company" model="ir.rule">
+        <field name="name">Salles : société</field>
+        <field name="model_id" ref="model_judo_room"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
+    <record id="rule_judo_room_booking_company" model="ir.rule">
+        <field name="name">Réservations : société</field>
+        <field name="model_id" ref="model_judo_room_booking"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="global" eval="True"/>
+    </record>
 </odoo>

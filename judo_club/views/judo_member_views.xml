@@ -8,6 +8,7 @@
             <tree string="Adhérents" decoration-danger="amount_due &gt; 0" decoration-muted="state == 'inactive'">
                 <field name="name"/>
                 <field name="age"/>
+                <field name="age_category_id"/>
                 <field name="grade"/>
                 <field name="category_ids" widget="many2many_tags"/>
                 <field name="phone"/>
@@ -36,6 +37,7 @@
                             <field name="first_name"/>
                             <field name="birth_date"/>
                             <field name="age"/>
+                            <field name="age_category_id"/>
                             <field name="gender"/>
                             <field name="category_ids" widget="many2many_tags"/>
                             <field name="quartier"/>
